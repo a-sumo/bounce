@@ -22,14 +22,6 @@
   background: #2a2a2a;
 }
 
-/* The Tweakpane container can have a background & spacing */
-.tweakpane-container {
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 8px;
-}
-
 /* Track control grouping */
 .track-control-group {
   margin: 1rem;

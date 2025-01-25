@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Pane } from "tweakpane";
 import { FaPlus, FaTimes } from "react-icons/fa";
 
 const CircularInterface = ({
@@ -11,7 +10,6 @@ const CircularInterface = ({
   const [draggingIndex, setDraggingIndex] = useState(-1);
   const [hoverIndex, setHoverIndex] = useState(-1);
   const containerRef = useRef(null);
-  const paneRef = useRef(null);
 
   // Main circle radius and center
   const CIRCLE_RADIUS = 250;
@@ -41,26 +39,6 @@ const CircularInterface = ({
     setDraggingIndex(-1);
   };
 
-  // Add Tweakpane controls for angle debugging
-  useEffect(() => {
-    const pane = new Pane({ container: paneRef.current });
-    tracks.forEach((track, index) => {
-      const folder = pane.addFolder({ title: `Track ${index + 1}` });
-      folder
-        .addBinding(track, "debugAngle", {
-          min: 0,
-          max: 360,
-          step: 1,
-        })
-        .on("change", (ev) => {
-          onUpdateTrack(index, {
-            angle: (ev.value * Math.PI) / 180,
-            debugAngle: ev.value,
-          });
-        });
-    });
-    return () => pane.dispose();
-  }, [tracks, onUpdateTrack]);
 
   // Render each track on the circle
   const renderTrack = (track, index) => {
@@ -72,8 +50,8 @@ const CircularInterface = ({
 
     // Inner circle moves from center to the outer circle proportionally to intensity
     const innerPos = {
-      x: CENTER.x + (outerPos.x - CENTER.x) * track.intensity * 100,
-      y: CENTER.y + (outerPos.y - CENTER.y) * track.intensity * 100,
+      x: CENTER.x + (outerPos.x - CENTER.x) * track.intensity * 1,
+      y: CENTER.y + (outerPos.y - CENTER.y) * track.intensity * 1,
     };
 
     return (
@@ -144,9 +122,6 @@ const CircularInterface = ({
 
   return (
     <div className="interface-container" ref={containerRef}>
-      {/* Tweakpane UI */}
-      <div ref={paneRef} className="tweakpane-container"></div>
-
       {/* Main SVG circle area */}
       <svg
         width="512"
