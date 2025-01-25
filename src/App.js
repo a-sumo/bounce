@@ -1,17 +1,20 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaPlay, FaStop } from "react-icons/fa";
 import CircularInterface from "./components/CircularInterface";
-import TrackControls from "./components/TrackControls";
-import AudioAnalyzer from "./components/AudioAnalyzer";
+import TrackComponent from "./components/TrackComponent";
+
 import "./App.css";
 
 const MAX_TRACKS = 2;
 
-const App = () => {
+function App() {
   const [tracks, setTracks] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  // We store references to hidden <audio> elements for each track.
   const audioRefs = useRef([]);
 
+  // Add a new track
   const addTrack = () => {
     if (tracks.length >= MAX_TRACKS) return;
     setTracks((prev) => [
@@ -25,16 +28,19 @@ const App = () => {
     ]);
   };
 
+  // Remove a track (stop, revokeObjectURL, remove from array)
   const removeTrack = (index) => {
     setTracks((prev) => prev.filter((_, i) => i !== index));
-    const audio = audioRefs.current[index];
-    if (audio) {
-      audio.pause();
-      URL.revokeObjectURL(audio.src);
+    const audioElem = audioRefs.current[index];
+    if (audioElem) {
+      audioElem.pause();
+      audioElem.currentTime = 0;
+      URL.revokeObjectURL(audioElem.src);
       audioRefs.current[index] = null;
     }
   };
 
+  // Update track properties
   const updateTrack = (index, updates) => {
     setTracks((prev) =>
       prev.map((track, i) =>
@@ -52,58 +58,67 @@ const App = () => {
     );
   };
 
+  // Handle file load
   const handleFileChange = (index) => async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Cleanup previous audio
-    const prevAudio = audioRefs.current[index];
-    if (prevAudio) {
-      prevAudio.pause();
-      URL.revokeObjectURL(prevAudio.src);
+    // Cleanup previous audio if any
+    const prevElem = audioRefs.current[index];
+    if (prevElem) {
+      prevElem.pause();
+      URL.revokeObjectURL(prevElem.src);
     }
 
-    // Create new audio with object URL
-    const audio = new Audio(URL.createObjectURL(file));
-    audioRefs.current[index] = audio;
+    // Create a new <audio> element (not added to DOM, or can be hidden)
+    const audioElem = new Audio();
+    audioElem.src = URL.createObjectURL(file);
+    audioElem.crossOrigin = "anonymous"; // helps with analysis
+    audioRefs.current[index] = audioElem;
 
-    // Wait for metadata to load
+    // Wait until metadata is loaded so we know the audio is ready
     await new Promise((resolve) => {
-      audio.addEventListener("loadedmetadata", resolve, { once: true });
+      audioElem.addEventListener("loadedmetadata", resolve, { once: true });
     });
 
     updateTrack(index, { fileName: file.name });
   };
 
+  // Start playback of all tracks
   const handlePlay = async () => {
     try {
+      const playPromises = [];
+      // Start each loaded audio
+      audioRefs.current.forEach((audioElem) => {
+        if (!audioElem) return;
+        // Return a promise from .play()
+        playPromises.push(audioElem.play());
+      });
       setIsPlaying(true);
-      await Promise.all(
-        audioRefs.current.filter(Boolean).map((audio) => audio.play())
-      );
-    } catch (error) {
-      console.error("Playback error:", error);
+      await Promise.all(playPromises);
+    } catch (err) {
+      console.error("Playback failed:", err);
       setIsPlaying(false);
     }
   };
 
+  // Stop all tracks
   const handleStop = () => {
-    audioRefs.current.forEach((audio) => {
-      if (audio) {
-        audio.pause();
-        audio.currentTime = 0;
-      }
+    audioRefs.current.forEach((audioElem) => {
+      if (!audioElem) return;
+      audioElem.pause();
+      audioElem.currentTime = 0;
     });
     setIsPlaying(false);
   };
 
-  // Cleanup audio resources on unmount
+  // Clean up on unmount
   useEffect(() => {
     return () => {
-      audioRefs.current.forEach((audio) => {
-        if (audio) {
-          URL.revokeObjectURL(audio.src);
-          audio.pause();
+      audioRefs.current.forEach((audioElem) => {
+        if (audioElem) {
+          audioElem.pause();
+          URL.revokeObjectURL(audioElem.src);
         }
       });
     };
@@ -120,23 +135,17 @@ const App = () => {
 
       <div className="controls">
         {tracks.map((track, index) => (
-          <div key={index} className="track-control-group">
-            <TrackControls
-              index={index}
-              track={track}
-              onFileChange={handleFileChange(index)}
-              onRemove={() => removeTrack(index)}
-            />
-            <AudioAnalyzer
-              audio={audioRefs.current[index]}
-              updateIntensity={(intensity) => {
-                console.log(`Track ${index + 1} Intensity:`, intensity);
-                updateTrack(index, { intensity });
-              }}
-            />
-          </div>
+          <TrackComponent
+            key={index}
+            index={index}
+            track={track}
+            audioRef={audioRefs.current[index]}
+            onFileChange={handleFileChange(index)}
+            onRemove={() => removeTrack(index)}
+            onUpdate={updateTrack}
+          />
         ))}
-        
+
         <div className="playback-controls">
           <button
             onClick={handlePlay}
@@ -145,8 +154,8 @@ const App = () => {
           >
             <FaPlay />
           </button>
-          <button 
-            onClick={handleStop} 
+          <button
+            onClick={handleStop}
             disabled={!isPlaying}
             className="stop-button"
           >
@@ -156,6 +165,6 @@ const App = () => {
       </div>
     </div>
   );
-};
+}
 
 export default App;

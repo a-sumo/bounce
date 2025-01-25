@@ -1,4 +1,4 @@
-/* Base styles */
+/* Overall app style */
 .app {
   display: flex;
   flex-direction: column;
@@ -7,172 +7,30 @@
   background: #1a1a1a;
   color: #fff;
   padding: 2rem;
+  font-family: 'Roboto', sans-serif;
 }
 
-/* Circular interface */
-.main-circle {
+/* The interface container to ensure responsiveness */
+.interface-container {
+  max-width: 512px;
+  margin: 0 auto;
+  width: 100%;
+  overflow: hidden;
   position: relative;
-  width: 512px;
-  height: 512px;
-  border-radius: 50%;
-  background: #222;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  border: 2px solid #333;
+  border-radius: 10px;
+  background: #2a2a2a;
 }
 
-.add-track {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #0088ff;
-  border: none;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  transition: background 0.2s;
+/* The Tweakpane container can have a background & spacing */
+.tweakpane-container {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
 }
 
-.add-track:hover {
-  background: #0077cc;
-}
-
-/* Controls */
-.controls {
-  margin-top: 2rem;
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.track-control label {
-  display: block;
-  padding: 0.8rem 1.2rem;
-  background: #0088ff;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.track-control label:hover {
-  background: #0077cc;
-}
-
-.playback-controls {
-  display: flex;
-  gap: 1rem;
-}
-
-.playback-controls button {
-  padding: 1.2rem;
-  border: none;
-  border-radius: 50%;
-  background: #00cc77;
-  color: #1a1a1a;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: grid;
-  place-items: center;
-}
-
-.playback-controls button:disabled {
-  background: #444;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.playback-controls button:hover:not(:disabled) {
-  background: #00bb66;
-  transform: scale(1.1);
-}
-
-/* Tweakpane overrides */
-.tp-dfwv {
-  --tp-base-background-color: hsla(0, 0%, 10%, 0.9);
-  --tp-button-background-color: #0088ff;
-  --tp-button-background-color-active: #0077cc;
-  backdrop-filter: blur(4px);
-}
-
-/* Add these styles to App.css */
-.file-input {
-  display: none;
-}
-
-.file-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.2rem;
-  background: #333;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.file-label:hover {
-  background: #3a3a3a;
-}
-
-.file-label .loaded {
-  color: #00ff88;
-}
-
-.remove-track {
-  background: transparent;
-  border: none;
-  color: #ff4444;
-  cursor: pointer;
-  padding: 0.2rem;
-  display: grid;
-  place-items: center;
-}
-
-.track-control {
-  position: relative;
-  margin: 0.5rem 0;
-}
-
-.playback-controls {
-  margin-top: 1rem;
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-}
-
-/* Keep previous styles and add responsive adjustments */
-@media (max-width: 600px) {
-  .main-circle {
-    width: 300px;
-    height: 300px;
-  }
-  
-  .interface-container svg {
-    width: 300px;
-    height: 300px;
-  }
-  
-  .controls {
-    padding: 1rem;
-    width: 100%;
-    max-width: 400px;
-  }
-}
-/* .interface-container svg circle {
-  transition: 
-    cx 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    cy 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    r 0.2s ease-out;
-} */
-
-.interface-container svg line {
-  transition: 
-    x2 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    y2 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
+/* Track control grouping */
 .track-control-group {
   margin: 1rem;
   padding: 1rem;
@@ -181,34 +39,113 @@
   display: flex;
   gap: 1rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
+/* Track delete button with hover/focus effect */
 .track-delete-button {
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .track-delete-button:hover {
   transform: scale(1.1);
+  background: #ee2222; /* show some accent color on hover */
 }
 
+/* The "Add track" button in the center: bigger, clearer pointer feedback */
+.add-track-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #0088ff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 136, 255, 0.5);
+  transition: background 0.3s, transform 0.2s;
+}
+.add-track-button:hover:not(:disabled) {
+  background: #0072df;
+  transform: scale(1.05);
+}
 .add-track-button:disabled {
   background: #666 !important;
   cursor: not-allowed;
   opacity: 0.7;
 }
 
-.play-button, .stop-button {
+/* The main circle boundary styling */
+.interface-container svg circle {
+  transition: stroke 0.2s ease, r 0.25s ease;
+}
+
+/* Playback controls (Play, Stop) */
+.playback-controls {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+.playback-controls button {
+  padding: 1.2rem;
+  border: none;
+  border-radius: 50%;
+  background: #00cc77;
+  color: #1a1a1a;
+  cursor: pointer;
+  width: 60px;  /* Larger for better mobile hit area */
+  height: 60px;
   transition: all 0.2s ease;
-  width: 50px;
-  height: 50px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 8px rgba(0, 204, 119, 0.4);
 }
-
-.play-button:not(:disabled):hover {
-  background: #00cc77 !important;
+.playback-controls button:disabled {
+  background: #444;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.playback-controls button:hover:not(:disabled) {
+  background: #00bb66;
   transform: scale(1.1);
 }
 
-.stop-button:not(:disabled):hover {
-  background: #ff4444 !important;
-  transform: scale(1.1);
+/* The file drop area & labels */
+.file-input {
+  display: none;
+}
+.file-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.2rem;
+  background: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.file-label:hover {
+  background: #3a3a3a;
+  transform: scale(1.02);
+}
+.file-label span {
+  color: #eee;
+}
+.file-label .loaded {
+  color: #00ff88;
+  font-weight: bold;
+}
+
+/* For smaller screens */
+@media (max-width: 600px) {
+  .interface-container svg {
+    max-width: 300px;
+    max-height: 300px;
+  }
+  .playback-controls button {
+    width: 50px;
+    height: 50px;
+  }
 }

@@ -1,5 +1,4 @@
-import React from 'react';
-import useAudioAnalyzer from '../hooks/useAudioAnalyzer';
+import useAudioAnalyzer from '../hooks/useTrackAnalyzer';
 
 const AudioAnalyzer = ({ audio, updateIntensity }) => {
   useAudioAnalyzer(audio, updateIntensity);
