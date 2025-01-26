@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FaPlay, FaStop } from "react-icons/fa";
 import CircularInterface from "./components/CircularInterface";
 import TrackComponent from "./components/TrackComponent";
@@ -11,10 +11,8 @@ function App() {
   const [tracks, setTracks] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // We store references to hidden <audio> elements for each track.
   const audioRefs = useRef([]);
 
-  // Add a new track
   const addTrack = () => {
     if (tracks.length >= MAX_TRACKS) return;
     setTracks((prev) => [
@@ -28,7 +26,6 @@ function App() {
     ]);
   };
 
-  // Remove a track (stop, revokeObjectURL, remove from array)
   const removeTrack = (index) => {
     setTracks((prev) => prev.filter((_, i) => i !== index));
     const audioElem = audioRefs.current[index];
@@ -40,7 +37,6 @@ function App() {
     }
   };
 
-  // Update track properties
   const updateTrack = (index, updates) => {
     setTracks((prev) =>
       prev.map((track, i) =>
@@ -58,25 +54,21 @@ function App() {
     );
   };
 
-  // Handle file load
   const handleFileChange = (index) => async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Cleanup previous audio if any
     const prevElem = audioRefs.current[index];
     if (prevElem) {
       prevElem.pause();
       URL.revokeObjectURL(prevElem.src);
     }
 
-    // Create a new <audio> element (not added to DOM, or can be hidden)
     const audioElem = new Audio();
     audioElem.src = URL.createObjectURL(file);
-    audioElem.crossOrigin = "anonymous"; // helps with analysis
+    audioElem.crossOrigin = "anonymous";
     audioRefs.current[index] = audioElem;
 
-    // Wait until metadata is loaded so we know the audio is ready
     await new Promise((resolve) => {
       audioElem.addEventListener("loadedmetadata", resolve, { once: true });
     });
@@ -84,15 +76,11 @@ function App() {
     updateTrack(index, { fileName: file.name });
   };
 
-  // Start playback of all tracks
   const handlePlay = async () => {
     try {
-      const playPromises = [];
-      // Start each loaded audio
-      audioRefs.current.forEach((audioElem) => {
-        if (!audioElem) return;
-        // Return a promise from .play()
-        playPromises.push(audioElem.play());
+      const playPromises = audioRefs.current.map(audioElem => {
+        if (!audioElem) return Promise.resolve();
+        return audioElem.play();
       });
       setIsPlaying(true);
       await Promise.all(playPromises);
@@ -102,7 +90,6 @@ function App() {
     }
   };
 
-  // Stop all tracks
   const handleStop = () => {
     audioRefs.current.forEach((audioElem) => {
       if (!audioElem) return;
@@ -112,7 +99,6 @@ function App() {
     setIsPlaying(false);
   };
 
-  // Clean up on unmount
   useEffect(() => {
     return () => {
       audioRefs.current.forEach((audioElem) => {
