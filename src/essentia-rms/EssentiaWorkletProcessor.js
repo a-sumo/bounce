@@ -9,7 +9,7 @@ class EssentiaWorkletProcessor extends AudioWorkletProcessor {
     this.port.postMessage({ type: 'ready' });
   }
 
-  process(inputs, outputs, parameters) {
+  process(inputs, outputs) {
     const input = inputs[0];
     const output = outputs[0];
 

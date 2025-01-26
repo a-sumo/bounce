@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { FaPlay, FaStop } from "react-icons/fa";
 import CircularInterface from "./components/CircularInterface";
 import TrackComponent from "./components/TrackComponent";
@@ -37,7 +37,7 @@ function App() {
     }
   };
 
-  const updateTrack = (index, updates) => {
+  const updateTrack = useCallback((index, updates) => {
     setTracks((prev) =>
       prev.map((track, i) =>
         i === index
@@ -52,7 +52,7 @@ function App() {
           : track
       )
     );
-  };
+  }, []);
 
   const handleFileChange = (index) => async (e) => {
     const file = e.target.files[0];
@@ -78,12 +78,15 @@ function App() {
 
   const handlePlay = async () => {
     try {
-      const playPromises = audioRefs.current.map(audioElem => {
-        if (!audioElem) return Promise.resolve();
-        return audioElem.play();
+      // Resume all audio contexts if needed
+      audioRefs.current.forEach(async (audioElem) => {
+        if (!audioElem) return;
+        if (audioElem.context && audioElem.context.state === 'suspended') {
+          await audioElem.context.resume();
+        }
+        await audioElem.play();
       });
       setIsPlaying(true);
-      await Promise.all(playPromises);
     } catch (err) {
       console.error("Playback failed:", err);
       setIsPlaying(false);

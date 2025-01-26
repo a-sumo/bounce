@@ -1,12 +1,17 @@
 // src/components/TrackComponent.js
-import React, { useEffect } from 'react';
+import { useCallback } from 'react';
 import TrackControls from './TrackControls';
 import useTrackAnalyzer from '../hooks/useTrackAnalyzer';
 
 const TrackComponent = ({ index, track, audioRef, onFileChange, onRemove, onUpdate }) => {
-  useTrackAnalyzer(audioRef, (intensity) => {
-    onUpdate(index, { intensity });
-  });
+  const onAnalysis = useCallback(
+    (intensity) => {
+      onUpdate(index, { intensity });
+    },
+    [onUpdate, index]
+  );
+
+  useTrackAnalyzer(audioRef, onAnalysis);
 
   return (
     <div className="track-control-group">
