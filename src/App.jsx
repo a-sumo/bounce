@@ -117,7 +117,7 @@ function App() {
   return (
     <div className="app">
       <Scene />
-      <div className="controls-panel">
+      {/* <div className="controls-panel">
         <CircularInterface
           tracks={tracks}
           onAddTrack={addTrack}
@@ -155,7 +155,7 @@ function App() {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
