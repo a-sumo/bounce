@@ -56,7 +56,6 @@ const CircularInterface = ({
 
     return (
       <g key={index}>
-        {/* Line from center to outer circle */}
         <line
           x1={CENTER.x}
           y1={CENTER.y}
@@ -66,22 +65,16 @@ const CircularInterface = ({
           strokeWidth="2"
         />
         
-        {/* Small inner circle that "bounces" outward based on intensity */}
         <circle
           cx={innerPos.x}
           cy={innerPos.y}
           r="8"
-          fill="#ffcc00"
-          style={{ transition: "all 0.1s ease-out" }}
         />
 
-        {/* Outer circle (draggable) */}
         <circle
           cx={outerPos.x}
           cy={outerPos.y}
           r="15"
-          fill={draggingIndex === index ? "#00ccff" : "#0088ff"}
-          style={{ cursor: "pointer", transition: "all 0.2s ease" }}
           onPointerDown={(e) => handlePointerDown(index, e)}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -89,7 +82,6 @@ const CircularInterface = ({
           onMouseLeave={() => setHoverIndex(-1)}
         />
         
-        {/* Delete button (visible on hover) */}
         {hoverIndex === index && (
           <foreignObject
             x={outerPos.x - 12}
@@ -101,15 +93,6 @@ const CircularInterface = ({
               className="track-delete-button"
               onClick={() => onRemoveTrack(index)}
               style={{
-                background: "#ff4444",
-                border: "none",
-                borderRadius: "50%",
-                width: "24px",
-                height: "24px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
               }}
             >
               <FaTimes size={12} color="white" />
@@ -122,27 +105,20 @@ const CircularInterface = ({
 
   return (
     <div className="interface-container" ref={containerRef}>
-      {/* Main SVG circle area */}
       <svg
         width="512"
         height="512"
         viewBox="0 0 512 512"
-        style={{ touchAction: "none" }}
       >
-        {/* Main outer circle boundary */}
         <circle
           cx={CENTER.x}
           cy={CENTER.y}
           r={CIRCLE_RADIUS}
           fill="none"
-          stroke="#333"
-          strokeWidth="4"
         />
 
-        {/* Renders each track */}
         {tracks.map(renderTrack)}
 
-        {/* Add track button in the center */}
         <foreignObject
           x={CENTER.x - 30}
           y={CENTER.y - 30}

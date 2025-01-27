@@ -1,0 +1,11 @@
+Model Information:
+* title:	Dragon Radar
+* source:	https://sketchfab.com/3d-models/dragon-radar-5042318b7e8744979d104f5c22ef6b0a
+* author:	berzerkey (https://sketchfab.com/berzerkey)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Dragon Radar" (https://sketchfab.com/3d-models/dragon-radar-5042318b7e8744979d104f5c22ef6b0a) by berzerkey (https://sketchfab.com/berzerkey) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { FaPlay, FaStop } from "react-icons/fa";
 import CircularInterface from "./components/CircularInterface";
 import TrackComponent from "./components/TrackComponent";
+import Scene from './components/Scene';
 
 import "./App.css";
 
@@ -115,41 +116,44 @@ function App() {
 
   return (
     <div className="app">
-      <CircularInterface
-        tracks={tracks}
-        onAddTrack={addTrack}
-        onUpdateTrack={updateTrack}
-        onRemoveTrack={removeTrack}
-      />
+      <Scene />
+      <div className="controls-panel">
+        <CircularInterface
+          tracks={tracks}
+          onAddTrack={addTrack}
+          onUpdateTrack={updateTrack}
+          onRemoveTrack={removeTrack}
+        />
 
-      <div className="controls">
-        {tracks.map((track, index) => (
-          <TrackComponent
-            key={index}
-            index={index}
-            track={track}
-            audioRef={audioRefs.current[index]}
-            onFileChange={handleFileChange(index)}
-            onRemove={() => removeTrack(index)}
-            onUpdate={updateTrack}
-          />
-        ))}
+        <div className="controls">
+          {tracks.map((track, index) => (
+            <TrackComponent
+              key={index}
+              index={index}
+              track={track}
+              audioRef={audioRefs.current[index]}
+              onFileChange={handleFileChange(index)}
+              onRemove={() => removeTrack(index)}
+              onUpdate={updateTrack}
+            />
+          ))}
 
-        <div className="playback-controls">
-          <button
-            onClick={handlePlay}
-            disabled={isPlaying || tracks.length === 0}
-            className="play-button"
-          >
-            <FaPlay />
-          </button>
-          <button
-            onClick={handleStop}
-            disabled={!isPlaying}
-            className="stop-button"
-          >
-            <FaStop />
-          </button>
+          <div className="playback-controls">
+            <button
+              onClick={handlePlay}
+              disabled={isPlaying || tracks.length === 0}
+              className="play-button"
+            >
+              <FaPlay />
+            </button>
+            <button
+              onClick={handleStop}
+              disabled={!isPlaying}
+              className="stop-button"
+            >
+              <FaStop />
+            </button>
+          </div>
         </div>
       </div>
     </div>
