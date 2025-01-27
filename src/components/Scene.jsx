@@ -47,7 +47,7 @@ function Model() {
     const virtualSize = 100
     const transformer = createTransformer(virtualSize)
     let time = 0;
-    
+
     // Create texture from canvas
     const canvasTexture = new THREE.CanvasTexture(canvas)
     canvasTexture.colorSpace = THREE.SRGBColorSpace
@@ -128,6 +128,7 @@ export default function Scene() {
     >
       <Suspense fallback={null}>
         <Environment
+          backgroundBlurriness={1} 
           background
           files="/textures/equirectangular/royal_esplanade_1k.hdr"
         />

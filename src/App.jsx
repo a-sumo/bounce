@@ -3,6 +3,7 @@ import { FaPlay, FaStop } from "react-icons/fa";
 import CircularInterface from "./components/CircularInterface";
 import TrackComponent from "./components/TrackComponent";
 import Scene from './components/Scene';
+import AudioPlayer from './components/audio/AudioPlayer';
 
 import "./App.css";
 
@@ -79,27 +80,18 @@ function App() {
 
   const handlePlay = async () => {
     try {
-      // Resume all audio contexts if needed
-      audioRefs.current.forEach(async (audioElem) => {
-        if (!audioElem) return;
-        if (audioElem.context && audioElem.context.state === 'suspended') {
-          await audioElem.context.resume();
-        }
-        await audioElem.play();
-      });
+      await audioContextManager.resume();
       setIsPlaying(true);
     } catch (err) {
       console.error("Playback failed:", err);
       setIsPlaying(false);
     }
   };
-
+  
   const handleStop = () => {
-    audioRefs.current.forEach((audioElem) => {
-      if (!audioElem) return;
-      audioElem.pause();
-      audioElem.currentTime = 0;
-    });
+    if (globalAudioContext) {
+      globalAudioContext.suspend();
+    }
     setIsPlaying(false);
   };
 
@@ -116,7 +108,8 @@ function App() {
 
   return (
     <div className="app">
-      <Scene />
+      {/* <Scene /> */}
+      <AudioPlayer trackUrl="/audio/drump-loop.mp3" />
       {/* <div className="controls-panel">
         <CircularInterface
           tracks={tracks}
