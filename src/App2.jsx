@@ -2,12 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import { FaPlay, FaPause } from 'react-icons/fa';
 
-export default function App() {
+const AudioTrack = ({ url }) => {
   const waveformRef = useRef(null);
   const wavesurferRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Initialize Wavesurfer
   useEffect(() => {
     const wavesurfer = WaveSurfer.create({
       container: waveformRef.current,
@@ -17,10 +16,10 @@ export default function App() {
       responsive: true,
     });
 
-    wavesurfer.load('/audio/drum-loop.mp3');
+    wavesurfer.load(url);
 
     wavesurfer.on('ready', () => {
-      console.log('Audio loaded');
+      console.log('Audio loaded:', url);
     });
 
     wavesurfer.on('finish', () => {
@@ -30,12 +29,11 @@ export default function App() {
     wavesurferRef.current = wavesurfer;
 
     return () => wavesurfer.destroy();
-  }, []);
+  }, [url]);
 
   const handlePlayPause = async () => {
     if (!wavesurferRef.current) return;
     
-    // Handle audio context resume on first interaction
     const backend = wavesurferRef.current.backend;
     if (backend && backend.ac && backend.ac.state === 'suspended') {
       await backend.ac.resume();
@@ -46,24 +44,38 @@ export default function App() {
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '2rem auto', padding: '1rem' }}>
+    <div style={{ marginBottom: '2rem' }}>
       <div ref={waveformRef} />
       <button 
         onClick={handlePlayPause}
         style={{ 
-          marginTop: '1rem',
+          marginTop: '0.5rem',
           padding: '0.5rem 1rem',
-          fontSize: '1.2rem',
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem',
-          width: '200px',
-          textAlign: 'center'
+          width: '200px'
         }}
       >
         {isPlaying ? <FaPause /> : <FaPlay />}
-        {isPlaying ? 'Pause' : 'Play'}
+        {url.split('/').pop()} - {isPlaying ? 'Pause' : 'Play'}
       </button>
+    </div>
+  );
+};
+
+export default function App() {
+  const tracks = [
+    '/audio/drum-loop.mp3',
+    '/audio/drum-loop.mp3',
+  ];
+
+  return (
+    <div style={{ maxWidth: '800px', margin: '2rem auto', padding: '1rem' }}>
+      <h1 style={{ marginBottom: '2rem' }}>Multi-Track Player</h1>
+      {tracks.map((trackUrl, index) => (
+        <AudioTrack key={index} url={trackUrl} />
+      ))}
     </div>
   );
 }
