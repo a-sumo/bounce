@@ -1,14 +1,15 @@
 import { useRef } from 'react';
 import Scene from '@/components/Scene';
 import AudioTrack from '@/components/audio/AudioTrack';
+import ControlPanel from '@/components/ControlPanel';
 import './App2.css';
 
 export default function App() {
   const trackIds = useRef([]);
   
   const tracks = [
-    { id: 'track-1', url: '/audio/drum-loop.mp3' },
-    { id: 'track-2', url: '/audio/drum-loop.mp3' },
+    { id: 'track-1', url: '/audio/kick_loop.mp3' },
+    { id: 'track-2', url: '/audio/clap_loop.mp3' },
   ];
 
   // Generate stable IDs

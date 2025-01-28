@@ -1,47 +1,105 @@
 // redux/audioSlice.js
-import { createSlice, configureStore } from '@reduxjs/toolkit'
+import { createSlice, configureStore } from "@reduxjs/toolkit";
+
+const RMS_WINDOW_SIZE = 30; // Adjust based on your needs
+const ATTACK_FACTOR = 0.3; // Fast increase
+const DECAY_FACTOR = 0.005; // Slow decrease
 
 const initialState = {
-  tracks: {}
-}
+  tracks: {},
+};
 
 const audioSlice = createSlice({
-  name: 'audio',
+  name: "audio",
   initialState,
   reducers: {
     registerTrack: (state, action) => {
-      const trackId = action.payload
-      console.log('trackId', trackId);
+      const trackId = action.payload;
       state.tracks[trackId] = {
         rms: 0,
-        yPos: 0
-      }
+        rmsWindow: new Array(RMS_WINDOW_SIZE).fill(0),
+        radius: 5,
+        angle: 0,
+        isPlaying: false,
+      };
     },
-    updateTrack: (state, action) => {
-      const { trackId, rms } = action.payload
-      const current = state.tracks[trackId]
-      if (!current) return
-      // console.log("Dispatching update for track:", trackId, "with RMS:", rms);
-      // Smooth the RMS value
-      const smoothedRms = 0.2 * rms + 0.8 * current.rms
-      const yPos = smoothedRms
+    updateTrack: (state, action, isPlaying ) => {
+      const { trackId, rms } = action.payload;
+      const current = state.tracks[trackId];
+      if (!current) return;
 
-      current.rms = smoothedRms
-      current.yPos = yPos
+      // Shift window and add new value
+      current.rmsWindow.shift();
+      current.rmsWindow.push(rms);
+
+      // Get current max RMS
+      const currentMax = Math.max(...current.rmsWindow);
+
+      // Apply different smoothing based on whether we're increasing or decreasing
+      if (rms > current.rms) {
+        // Fast attack
+        current.rms = current.rms + ATTACK_FACTOR * (rms - current.rms);
+      } else {
+        // Slow decay
+        current.rms = current.rms + DECAY_FACTOR * (currentMax - current.rms);
+      }
+
+      // Ensure RMS stays within bounds
+      current.rms = Math.max(0, Math.min(1, current.rms));
+      if (isPlaying !== undefined) state.tracks[trackId].isPlaying = isPlaying;
+    },
+    setTrackAngleAndRadius: (state, action) => {
+      const { trackId, angle, radius } = action.payload;
+      const current = state.tracks[trackId];
+      if (!current) return;
+
+      current.angle = angle;
+      current.radius = radius;
+    },
+    setGlobalPlaybackState: (state, action) => {
+      state.globalPlaybackState = action.payload;
+    },
+    playAllTracks: (state) => {
+      state.globalPlaybackState = 'playing';
+      Object.keys(state.tracks).forEach(trackId => {
+        state.tracks[trackId].isPlaying = true;
+      });
+    },
+    pauseAllTracks: (state) => {
+      state.globalPlaybackState = 'paused';
+      Object.keys(state.tracks).forEach(trackId => {
+        state.tracks[trackId].isPlaying = false;
+      });
+    },
+    resetAllTracks: (state) => {
+      state.globalPlaybackState = 'paused';
+      Object.keys(state.tracks).forEach(trackId => {
+        state.tracks[trackId].isPlaying = false;
+        // Reset other properties if needed
+      });
     },
     unregisterTrack: (state, action) => {
-      const trackId = action.payload
-      delete state.tracks[trackId]
-    }
-  }
-})
+      const trackId = action.payload;
+      delete state.tracks[trackId];
+    },
+  },
+});
 
-export const { registerTrack, updateTrack, unregisterTrack } = audioSlice.actions
+export const {
+  registerTrack,
+  updateTrack,
+  setTrackAngleAndRadius,
+  unregisterTrack,
+  setGlobalPlaybackState,
+  playAllTracks,
+  pauseAllTracks,
+  resetAllTracks
+} = audioSlice.actions;
 
 const store = configureStore({
   reducer: {
-    audio: audioSlice.reducer
-  }
-})
+    audio: audioSlice.reducer,
+  },
+});
 
-export default store
+export default store;

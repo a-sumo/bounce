@@ -3,8 +3,9 @@ import WaveSurfer from "wavesurfer.js";
 import { createEssentiaNode } from "@/essentia-rms/EssentiaNodeFactory";
 import { FaPlay, FaPause } from "react-icons/fa";
 import './AudioTrack.css';
-import { useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux';
 import { registerTrack, updateTrack, unregisterTrack } from '@/redux/audioSlice';
+import Sliders from '@/components/Sliders';
 
 const AudioTrack = ({ trackId, url }) => {
   const waveformRef = useRef(null);
@@ -105,8 +106,9 @@ const AudioTrack = ({ trackId, url }) => {
       <div className="waveform-container" ref={waveformRef} />
 
       <button onClick={handlePlayPause} className="play-button">
-        {isPlaying ? <FaPause size={20} /> : <FaPlay  size={20}/>}
+        {isPlaying ? <FaPause size={20} /> : <FaPlay size={20}/>}
       </button>
+      <Sliders trackId={trackId} />
     </div>
   );
 };
