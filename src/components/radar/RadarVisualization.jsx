@@ -49,7 +49,7 @@ export default function RadarVisualization({
 
     const animate = () => {
       // Clear background
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = "#00b02c";
       ctx.fillRect(0, 0, 1024, 1024);
 
       // Main boundary circle
@@ -63,8 +63,8 @@ export default function RadarVisualization({
       ctx.lineWidth = 2;
 
       // Draw vertical grid lines
-      const gridSize = (targetRadius * 2) / 8;
-      for (let x = -4; x <= 4; x++) {
+      const gridSize = (targetRadius * 2) / 16;
+      for (let x = -8; x <= 8; x++) {
         const xPos = targetCenter.x + x * gridSize;
         ctx.beginPath();
         ctx.moveTo(xPos, targetCenter.y - targetRadius);
@@ -73,7 +73,7 @@ export default function RadarVisualization({
       }
 
       // Draw horizontal grid lines
-      for (let y = -4; y <= 4; y++) {
+      for (let y = -8; y <= 8; y++) {
         const yPos = targetCenter.y + y * gridSize;
         ctx.beginPath();
         ctx.moveTo(targetCenter.x - targetRadius, yPos);
@@ -83,8 +83,8 @@ export default function RadarVisualization({
 
       // Draw each track's circle
       Object.entries(tracks).forEach(([trackId, { yPos }]) => {
-        const virtualY = virtualSize / 2 + yPos * (virtualSize / 4) * 2;
-        const radius = transformer.transformRadius(5);
+        const virtualY = virtualSize / 2 + yPos * (virtualSize / 4) * 5;
+        const radius = transformer.transformRadius(2);
         const color = trackId === "track-1" ? "#ffff00" : "#ffff00";
         const [x, y] = transformer.transform(virtualSize / 2, virtualY);
 

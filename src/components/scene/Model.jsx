@@ -40,7 +40,7 @@ const Model = () => {
       <primitive 
         object={scene} 
         scale={0.01}
-        position={[0, -0.5, 0]}
+        position={[0, -0.27, 0]}
       />
       {/* 
         RadarVisualization will create its own CanvasTexture and store it in
