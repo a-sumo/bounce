@@ -58,34 +58,26 @@ export default function RadarVisualization({
       ctx.fillStyle = "#00b02c";
       ctx.fill();
 
-      // Draw grid lines
+      // Draw square grid
       ctx.strokeStyle = "#005014";
       ctx.lineWidth = 2;
 
-      // Draw concentric circles
-      const numCircles = 4;
-      for (let i = 1; i <= numCircles; i++) {
+      // Draw vertical grid lines
+      const gridSize = (targetRadius * 2) / 8;
+      for (let x = -4; x <= 4; x++) {
+        const xPos = targetCenter.x + x * gridSize;
         ctx.beginPath();
-        ctx.arc(
-          targetCenter.x,
-          targetCenter.y,
-          (targetRadius / numCircles) * i,
-          0,
-          Math.PI * 2
-        );
+        ctx.moveTo(xPos, targetCenter.y - targetRadius);
+        ctx.lineTo(xPos, targetCenter.y + targetRadius);
         ctx.stroke();
       }
 
-      // Draw radial lines
-      const numLines = 12;
-      for (let i = 0; i < numLines; i++) {
-        const angle = (i * Math.PI * 2) / numLines;
+      // Draw horizontal grid lines
+      for (let y = -4; y <= 4; y++) {
+        const yPos = targetCenter.y + y * gridSize;
         ctx.beginPath();
-        ctx.moveTo(targetCenter.x, targetCenter.y);
-        ctx.lineTo(
-          targetCenter.x + Math.cos(angle) * targetRadius,
-          targetCenter.y + Math.sin(angle) * targetRadius
-        );
+        ctx.moveTo(targetCenter.x - targetRadius, yPos);
+        ctx.lineTo(targetCenter.x + targetRadius, yPos);
         ctx.stroke();
       }
 
@@ -93,7 +85,7 @@ export default function RadarVisualization({
       Object.entries(tracks).forEach(([trackId, { yPos }]) => {
         const virtualY = virtualSize / 2 + yPos * (virtualSize / 4) * 2;
         const radius = transformer.transformRadius(5);
-        const color = trackId === "track-1" ? "#ffff00" : "#ffffff";
+        const color = trackId === "track-1" ? "#ffff00" : "#ffff00";
         const [x, y] = transformer.transform(virtualSize / 2, virtualY);
 
         // Add glow effect
