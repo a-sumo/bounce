@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Environment, useGLTF } from '@react-three/drei'
 import { Suspense, useEffect, useRef } from 'react'
+import Model from '@/components/scene/Model'
 import * as THREE from 'three'
 
 // Constants for the target region
@@ -29,7 +30,7 @@ function createTransformer(virtualSize) {
   }
 }
 
-function Model() {
+function Model2() {
   const { scene } = useGLTF('/models/dragon_radar/scene.gltf')
   const canvasRef = useRef(null)
   const textureRef = useRef(null)

@@ -3,13 +3,31 @@ import WaveSurfer from "wavesurfer.js";
 import { createEssentiaNode } from "@/essentia-rms/EssentiaNodeFactory";
 import { FaPlay, FaPause } from "react-icons/fa";
 import './AudioTrack.css';
+import { useDispatch } from 'react-redux'
+import { registerTrack, updateTrack, unregisterTrack } from '@/redux/audioSlice';
 
-const AudioTrack = ({ url }) => {
+const AudioTrack = ({ trackId, url }) => {
   const waveformRef = useRef(null);
   const wavesurferRef = useRef(null);
   const essentiaNodeRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [rmsLevel, setRmsLevel] = useState(0);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Register track in Redux
+    dispatch(registerTrack(trackId))
+
+    // Cleanup/unregister on unmount
+    return () => {
+      dispatch(unregisterTrack(trackId))
+    }
+  }, [trackId, dispatch])
+
+  // Whenever you have a new RMS value computed (e.g. from Audio Analyzers), dispatch update:
+  const handleNewRms = (rmsValue) => {
+    dispatch(updateTrack({ trackId, rms: rmsValue }));
+  }
 
   useEffect(() => {
     const wavesurfer = WaveSurfer.create({
@@ -37,6 +55,7 @@ const AudioTrack = ({ url }) => {
           essentiaNode.port.onmessage = (event) => {
             if (event.data.rms !== undefined) {
               setRmsLevel(event.data.rms);
+              handleNewRms(event.data.rms);
             }
           };
 
