@@ -1,0 +1,43 @@
+/* components/audio/AudioTrack.css */
+.track-container {
+  position: relative;
+}
+
+.waveform-container {
+  height: 60px;
+  margin-bottom: 0.5rem;
+}
+
+.track-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.track-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.rms-display {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.play-button {
+  background: #ff5501;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}

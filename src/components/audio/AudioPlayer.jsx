@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { FaPlay, FaPause, FaVolumeUp, FaVolumeMute } from "react-icons/fa";
-import WaveSurfer from 'wavesurfer.js';
-import { audioContextManager } from '../../services/AudioContextManager';
+import WaveSurfer from "wavesurfer.js";
+import { audioContextManager } from "@/services/AudioContextManager";
 
 const AudioPlayer = ({ trackUrl }) => {
   const waveformRef = useRef(null);
@@ -16,23 +16,23 @@ const AudioPlayer = ({ trackUrl }) => {
     const initializeWavesurfer = async () => {
       try {
         const audioContext = audioContextManager.getContext();
-        
+
         const wavesurfer = WaveSurfer.create({
           container: waveformRef.current,
-          waveColor: '#ff5501',
-          progressColor: '#d44700',
-          cursorColor: 'transparent',
+          waveColor: "#ff5501",
+          progressColor: "#d44700",
+          cursorColor: "transparent",
           height: 80,
           responsive: true,
           audioContext,
-          backend: 'WebAudio'
+          backend: "WebAudio",
         });
 
         wavesurfer.load(trackUrl);
 
-        wavesurfer.on('ready', () => {
+        wavesurfer.on("ready", () => {
           setDuration(wavesurfer.getDuration());
-          const savedVolume = localStorage.getItem('audio-player-volume');
+          const savedVolume = localStorage.getItem("audio-player-volume");
           if (savedVolume) {
             const volumeValue = parseFloat(savedVolume);
             wavesurfer.setVolume(volumeValue);
@@ -40,11 +40,11 @@ const AudioPlayer = ({ trackUrl }) => {
           }
         });
 
-        wavesurfer.on('audioprocess', () => {
+        wavesurfer.on("audioprocess", () => {
           setCurrentTime(wavesurfer.getCurrentTime());
         });
 
-        wavesurfer.on('finish', () => {
+        wavesurfer.on("finish", () => {
           setIsPlaying(false);
         });
 
@@ -56,7 +56,7 @@ const AudioPlayer = ({ trackUrl }) => {
           audioContextManager.unregisterPlayer(trackUrl);
         };
       } catch (error) {
-        console.error('Failed to initialize audio:', error);
+        console.error("Failed to initialize audio:", error);
       }
     };
 
@@ -67,7 +67,7 @@ const AudioPlayer = ({ trackUrl }) => {
     try {
       // Resume context on user interaction
       await audioContextManager.resume();
-      
+
       if (!isPlaying) {
         await audioContextManager.play(trackUrl);
       } else {
@@ -75,7 +75,7 @@ const AudioPlayer = ({ trackUrl }) => {
       }
       setIsPlaying(!isPlaying);
     } catch (error) {
-      console.error('Playback failed:', error);
+      console.error("Playback failed:", error);
     }
   }, [isPlaying, trackUrl]);
 

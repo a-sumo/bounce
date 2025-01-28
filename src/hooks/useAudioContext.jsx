@@ -1,6 +1,6 @@
 // src/hooks/useAudioContext.js
 import { useEffect } from 'react';
-import { audioContextManager } from '../services/AudioContextManager';
+import { audioContextManager } from '@/services/AudioContextManager';
 
 export function useAudioContext() {
   useEffect(() => {
