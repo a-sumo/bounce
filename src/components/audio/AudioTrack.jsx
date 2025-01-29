@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import WaveSurfer from "wavesurfer.js";
 import { createEssentiaNode } from "@/essentia-rms/EssentiaNodeFactory";
+import { useDispatch, useSelector } from "react-redux";
 import { FaPlay, FaPause } from "react-icons/fa";
 import './AudioTrack.css';
-import { useDispatch } from 'react-redux';
 import { registerTrack, updateTrack, unregisterTrack } from '@/redux/audioSlice';
 import Sliders from '@/components/Sliders';
 
@@ -11,103 +11,103 @@ const AudioTrack = ({ trackId, url }) => {
   const waveformRef = useRef(null);
   const wavesurferRef = useRef(null);
   const essentiaNodeRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [rmsLevel, setRmsLevel] = useState(0);
   const dispatch = useDispatch();
+  const [rmsLevel, setRmsLevel] = useState(0);
+  
+  // Redux state
+  const { isPlaying } = useSelector(state => state.audio.tracks[trackId] || {});
+  const lastResetTimestamp = useSelector(state => state.audio.lastResetTimestamp);
 
   useEffect(() => {
-    // Register track in Redux
-    dispatch(registerTrack(trackId))
-
-    // Cleanup/unregister on unmount
+    dispatch(registerTrack(trackId));
     return () => {
-      dispatch(unregisterTrack(trackId))
-    }
-  }, [trackId, dispatch])
-
-  // Whenever you have a new RMS value computed (e.g. from Audio Analyzers), dispatch update:
-  const handleNewRms = (rmsValue) => {
-    dispatch(updateTrack({ trackId, rms: rmsValue }));
-  }
+      dispatch(unregisterTrack(trackId));
+      if (essentiaNodeRef.current) {
+        wavesurferRef.current?.backend?.setFilter(null);
+        essentiaNodeRef.current.disconnect();
+      }
+      wavesurferRef.current?.destroy();
+    };
+  }, [trackId, dispatch]);
 
   useEffect(() => {
     const wavesurfer = WaveSurfer.create({
       container: waveformRef.current,
       waveColor: "#ff5501",
       progressColor: "#d44700",
-      height: 80,
+      height: 40,
       responsive: true,
     });
 
     wavesurfer.load(url);
 
     wavesurfer.on("ready", async () => {
-      console.log("Audio loaded:", url);
-
-      // Create and connect Essentia node when audio is ready
-      if (wavesurfer.backend && wavesurfer.backend.ac) {
-        try {
+      try {
+        if (wavesurfer.backend?.ac) {
           const essentiaNode = await createEssentiaNode(wavesurfer.backend.ac);
-
-          // Connect the Essentia node to the audio graph
           wavesurfer.backend.setFilter(essentiaNode);
-
-          // Listen for RMS updates
           essentiaNode.port.onmessage = (event) => {
             if (event.data.rms !== undefined) {
               setRmsLevel(event.data.rms);
-              handleNewRms(event.data.rms);
+              dispatch(updateTrack({ 
+                trackId, 
+                rms: event.data.rms,
+                isPlaying: wavesurfer.isPlaying()
+              }));
             }
           };
-
           essentiaNodeRef.current = essentiaNode;
-        } catch (error) {
-          console.error("Failed to create Essentia node:", error);
         }
+      } catch (error) {
+        console.error("Essentia node error:", error);
       }
+      wavesurferRef.current = wavesurfer;
     });
 
-    wavesurfer.on("finish", () => {
-      setIsPlaying(false);
-    });
+    return () => wavesurfer.destroy();
+  }, [url, dispatch, trackId]);
 
-    wavesurferRef.current = wavesurfer;
-
-    return () => {
-      if (essentiaNodeRef.current) {
-        wavesurfer.backend.setFilter(null);
-        essentiaNodeRef.current.disconnect();
-      }
-      wavesurfer.destroy();
-    };
-  }, [url]);
-
-  const handlePlayPause = async () => {
+  useEffect(() => {
     if (!wavesurferRef.current) return;
+    isPlaying ? wavesurferRef.current.play() : wavesurferRef.current.pause();
+  }, [isPlaying]);
 
-    const backend = wavesurferRef.current.backend;
-    if (backend && backend.ac && backend.ac.state === "suspended") {
-      await backend.ac.resume();
+  useEffect(() => {
+    if (wavesurferRef.current && lastResetTimestamp) {
+      wavesurferRef.current.seekTo(0);
     }
+  }, [lastResetTimestamp]);
 
-    wavesurferRef.current.playPause();
-    setIsPlaying((prev) => !prev);
+  const handlePlayPause = () => {
+    dispatch(updateTrack({ 
+      trackId, 
+      isPlaying: !isPlaying 
+    }));
   };
 
   return (
     <div className="track-container">
       <div className="track-info">
-        <span className="track-name">{url.split("/").pop()}</span>
+        <span className="track-name" title={url.split("/").pop()}>
+          {url.split("/").pop()}
+        </span>
         <div className="rms-display">
-          RMS: {rmsLevel === -Infinity ? "0" : rmsLevel.toFixed(1)}
+          {rmsLevel === -Infinity ? "0" : rmsLevel.toFixed(1)} dB
         </div>
       </div>
-
-      <div className="waveform-container" ref={waveformRef} />
-
-      <button onClick={handlePlayPause} className="play-button">
-        {isPlaying ? <FaPause size={20} /> : <FaPlay size={20}/>}
-      </button>
+      <div className="waveform-container" ref={waveformRef}>
+        <button 
+          onClick={handlePlayPause} 
+          className="play-button"
+          aria-label={isPlaying ? 'Pause' : 'Play'}
+        >
+          {isPlaying ? (
+            <FaPause size={16} />
+          ) : (
+            <FaPlay size={16} style={{ marginLeft: '2px' }} />
+          )}
+        </button>
+      </div>
       <Sliders trackId={trackId} />
     </div>
   );

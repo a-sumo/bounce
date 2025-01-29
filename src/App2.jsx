@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import Scene from '@/components/Scene';
 import AudioTrack from '@/components/audio/AudioTrack';
-import ControlPanel from '@/components/ControlPanel';
+import GlobalControls from './components/GlobalControls';
 import './App2.css';
 
 export default function App() {
@@ -23,6 +23,7 @@ export default function App() {
       
       <div className="player-section">
         <div className="tracks-container">
+          <GlobalControls/>
           {tracks.map((track) => (
             <div key={track.id} className="track-item">
               <AudioTrack trackId={track.id} url={track.url} />

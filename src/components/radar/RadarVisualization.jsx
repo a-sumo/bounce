@@ -151,35 +151,35 @@ export default function RadarVisualization({
         ctx.fillStyle = color;
         ctx.fill();
       });
-      // Compute average position
-      const avgPos = computeAveragePosition(tracks);
+      // // Compute average position
+      // const avgPos = computeAveragePosition(tracks);
 
-      // Convert to virtual coordinates
-      const vx =
-        virtualSize / 2 + avgPos.magnitude * (virtualSize / 4) * avgPos.x;
-      const vy =
-        virtualSize / 2 + avgPos.magnitude * (virtualSize / 4) * avgPos.y;
+      // // Convert to virtual coordinates
+      // const vx =
+      //   virtualSize / 2 + avgPos.magnitude * (virtualSize / 4) * avgPos.x;
+      // const vy =
+      //   virtualSize / 2 + avgPos.magnitude * (virtualSize / 4) * avgPos.y;
 
-      // Transform to canvas coordinates
-      const [x, y] = transformer.transform(vx, vy);
-      const pointRadius = transformer.transformRadius(3); // Slightly larger than before
-      const color = "#ffff00";
+      // // Transform to canvas coordinates
+      // const [x, y] = transformer.transform(vx, vy);
+      // const pointRadius = transformer.transformRadius(3); // Slightly larger than before
+      // const color = "#ffff00";
 
-      // Draw average position indicator
-      const gradient = ctx.createRadialGradient(x, y, 0, x, y, pointRadius * 3);
-      gradient.addColorStop(0, color);
-      gradient.addColorStop(0.1, color);
-      gradient.addColorStop(1, "transparent");
+      // // Draw average position indicator
+      // const gradient = ctx.createRadialGradient(x, y, 0, x, y, pointRadius * 3);
+      // gradient.addColorStop(0, color);
+      // gradient.addColorStop(0.1, color);
+      // gradient.addColorStop(1, "transparent");
 
-      ctx.beginPath();
-      ctx.arc(x, y, pointRadius * 3, 0, Math.PI * 2);
-      ctx.fillStyle = gradient;
-      ctx.fill();
+      // ctx.beginPath();
+      // ctx.arc(x, y, pointRadius * 3, 0, Math.PI * 2);
+      // ctx.fillStyle = gradient;
+      // ctx.fill();
 
-      ctx.beginPath();
-      ctx.arc(x, y, pointRadius, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.fill();
+      // ctx.beginPath();
+      // ctx.arc(x, y, pointRadius, 0, Math.PI * 2);
+      // ctx.fillStyle = color;
+      // ctx.fill();
 
       // Update the texture
       textureRef.current.needsUpdate = true;

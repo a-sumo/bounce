@@ -1,4 +1,4 @@
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, DragControls } from "@react-three/drei";
 import { useEffect, useState } from "react";
 import * as THREE from "three";
 
@@ -14,37 +14,30 @@ const DRAGON_BALLS = {
   ONE_STAR: {
     stars: 1,
     objectName: "Ball001_2",
-    description: "One-Star Dragon Ball (一星球, Īxīng Qiú)",
   },
   TWO_STAR: {
     stars: 2,
     objectName: "Ball002_4",
-    description: "Two-Star Dragon Ball (二星球, Èrxīng Qiú)",
   },
   THREE_STAR: {
     stars: 3,
     objectName: "Ball003_6",
-    description: "Three-Star Dragon Ball (三星球, Sānxīng Qiú)",
   },
   FOUR_STAR: {
     stars: 4,
     objectName: "BALL_2_8",
-    description: "Four-Star Dragon Ball (四星球, Sìxīng Qiú)",
   },
   FIVE_STAR: {
     stars: 5,
     objectName: "BALL_2001_10",
-    description: "Five-Star Dragon Ball (五星球, Wǔxīng Qiú)",
   },
   SIX_STAR: {
     stars: 6,
     objectName: "BALL_2002_12",
-    description: "Six-Star Dragon Ball (六星球, Liùxīng Qiú)",
   },
   SEVEN_STAR: {
     stars: 7,
     objectName: "Ball_14",
-    description: "Seven-Star Dragon Ball (七星球, Qīxīng Qiú)",
   },
 };
 
@@ -104,7 +97,9 @@ const DragonBallsModel = ({ ballIndex = 1, emissiveIntensity = 1 }) => {
   return (
     <>
       {selectedObject && (
-        <primitive object={selectedObject} scale={1} position={[0, -0.27, 0]} />
+        <DragControls>
+        <primitive object={selectedObject} scale={0.05} position={[0, 0, 0]} />
+        </DragControls>
       )}
     </>
   );

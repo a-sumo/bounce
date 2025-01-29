@@ -1,43 +1,92 @@
 /* components/audio/AudioTrack.css */
 .track-container {
   position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .waveform-container {
-  height: 60px;
-  margin-bottom: 0.5rem;
+  height: 50px;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .track-info {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  gap: 0.5rem;
 }
 
 .track-name {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 120px;
+  flex: 1;
 }
 
 .rms-display {
+  font-size: 0.8rem;
   background: rgba(0, 0, 0, 0.3);
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  min-width: 70px;
+  text-align: center;
 }
 
 .play-button {
-  background: #ff5501;
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  background: #ff5501dd;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
+  backdrop-filter: blur(2px);
+  z-index: 10;
+  /* transition: transform 0.2s ease; */
 }
 
+.play-button:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .track-container {
+    padding: 0.5rem;
+  }
+  
+  .waveform-container {
+    height: 45px;
+  }
+  
+  .track-name {
+    font-size: 0.8rem;
+    max-width: 60%;
+  }
+  
+  .rms-display {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .play-button {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .play-button svg {
+    size: 14px;
+  }
+}

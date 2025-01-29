@@ -26,7 +26,7 @@ export default function Scene() {
     <Canvas
       camera={{
         fov: 45,
-        position: [0, 0, 0.5],
+        position: [0, 0, 1],
         near: 0.25,
         far: 20,
       }}
@@ -37,18 +37,16 @@ export default function Scene() {
       }}
     >
       <Suspense fallback={null}>
-        {/* <Environment
+        <Environment
           backgroundBlurriness={1}
           background={true}
           files="/textures/equirectangular/royal_esplanade_1k.hdr"
-        /> */}
-        <Stage >
+        />
         <RadarModel />
-        {/* <DragonBallsModel ballIndex={4} emissiveIntensity={0.1} /> */}
-        {/* <ScouterModel /> */}
-        <OrbitControls minDistance={1} maxDistance={5} target={[0, 0, -0.2]} />
+        {/* <OrbitControls minDistance={1} maxDistance={5} target={[0, 0, -0.2]} /> */}
+        <axesHelper args={[5]} />
+        <gridHelper />
         <ambientLight intensity={0.5} />
-        </Stage>
       </Suspense>
     </Canvas>
   );

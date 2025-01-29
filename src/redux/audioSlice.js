@@ -23,30 +23,39 @@ const audioSlice = createSlice({
         isPlaying: false,
       };
     },
-    updateTrack: (state, action, isPlaying ) => {
-      const { trackId, rms } = action.payload;
+    // Update the `updateTrack` reducer to handle `isPlaying`
+    updateTrack: (state, action) => {
+      const { trackId, rms, isPlaying } = action.payload;
       const current = state.tracks[trackId];
       if (!current) return;
-
-      // Shift window and add new value
-      current.rmsWindow.shift();
-      current.rmsWindow.push(rms);
-
-      // Get current max RMS
-      const currentMax = Math.max(...current.rmsWindow);
-
-      // Apply different smoothing based on whether we're increasing or decreasing
-      if (rms > current.rms) {
-        // Fast attack
-        current.rms = current.rms + ATTACK_FACTOR * (rms - current.rms);
-      } else {
-        // Slow decay
-        current.rms = current.rms + DECAY_FACTOR * (currentMax - current.rms);
+    
+      // RMS processing
+      if (rms !== undefined) {
+        current.rmsWindow.shift();
+        current.rmsWindow.push(rms);
+        const currentMax = Math.max(...current.rmsWindow);
+        if (rms > current.rms) {
+          current.rms += ATTACK_FACTOR * (rms - current.rms);
+        } else {
+          current.rms += DECAY_FACTOR * (currentMax - current.rms);
+        }
+        current.rms = Math.max(0, Math.min(1, current.rms));
       }
+    
+      // Play state update
+      if (isPlaying !== undefined) {
+        current.isPlaying = isPlaying;
+      }
+    },
 
-      // Ensure RMS stays within bounds
-      current.rms = Math.max(0, Math.min(1, current.rms));
-      if (isPlaying !== undefined) state.tracks[trackId].isPlaying = isPlaying;
+    // Reset all tracks to the start
+    resetAllTracks: (state) => {
+      state.globalPlaybackState = 'paused';
+      state.lastResetTimestamp = Date.now(); // Update timestamp
+      Object.keys(state.tracks).forEach(trackId => {
+        state.tracks[trackId].isPlaying = false;
+        state.tracks[trackId].currentTime = 0; // Reset playback position
+      });
     },
     setTrackAngleAndRadius: (state, action) => {
       const { trackId, angle, radius } = action.payload;
@@ -71,17 +80,11 @@ const audioSlice = createSlice({
         state.tracks[trackId].isPlaying = false;
       });
     },
-    resetAllTracks: (state) => {
-      state.globalPlaybackState = 'paused';
-      Object.keys(state.tracks).forEach(trackId => {
-        state.tracks[trackId].isPlaying = false;
-        // Reset other properties if needed
-      });
-    },
     unregisterTrack: (state, action) => {
       const trackId = action.payload;
       delete state.tracks[trackId];
     },
+    
   },
 });
 
