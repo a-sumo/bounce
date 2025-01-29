@@ -1,0 +1,11 @@
+Model Information:
+* title:	The 7 Dragon Balls
+* source:	https://sketchfab.com/3d-models/the-7-dragon-balls-438b4a18ccfc4d4980b944142da54b43
+* author:	Touati_Fellouh (https://sketchfab.com/Touati_Fellouh)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "The 7 Dragon Balls" (https://sketchfab.com/3d-models/the-7-dragon-balls-438b4a18ccfc4d4980b944142da54b43) by Touati_Fellouh (https://sketchfab.com/Touati_Fellouh) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

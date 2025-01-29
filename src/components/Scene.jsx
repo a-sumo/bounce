@@ -1,7 +1,8 @@
 import { Canvas, useThree, useLoader } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
 import { Suspense, useEffect } from "react";
-import Model from "@/components/scene/Model";
+import RadarModel from "@/components/scene/RadarModel";
+import DragonBallsModel from "@/components/scene/DragonBallsModel";
 import * as THREE from "three";
 
 function Background() {
@@ -41,7 +42,8 @@ export default function Scene() {
           files="/textures/equirectangular/royal_esplanade_1k.hdr"
         />
         <Background />
-        <Model />
+        {/* <RadarModel /> */}
+        <DragonBallsModel ballIndex={4} emissiveIntensity={0.1} />
         <OrbitControls minDistance={1} maxDistance={5} target={[0, 0, -0.2]} />
         <ambientLight intensity={0.5} />
       </Suspense>

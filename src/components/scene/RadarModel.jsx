@@ -1,10 +1,10 @@
-// components/scene/Model.jsx
+// components/scene/RadarModel.jsx
 import { useGLTF } from '@react-three/drei'
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import RadarVisualization from '@/components/radar/RadarVisualization'
 
-const Model = () => {
+const RadarModel = () => {
   const { scene } = useGLTF('/models/dragon_radar/scene.gltf')
   const emissiveMapRef = useRef(null)
 
@@ -55,4 +55,4 @@ const Model = () => {
   )
 }
 
-export default Model
+export default RadarModel
