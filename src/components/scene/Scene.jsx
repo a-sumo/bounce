@@ -1,7 +1,8 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
 import { Suspense } from "react";
-import DragonBallsModel from "@/components/scene/DragonBallsModel";
+import DragonBallModel from "@/components/scene/DragonBallModel";
+import RadarModel from "@/components/scene/RadarModel";
 import { useSelector } from "react-redux";
 import * as THREE from "three";
 
@@ -33,13 +34,13 @@ export default function Scene() {
         <axesHelper args={[5]} />
         <gridHelper />
         <ambientLight intensity={0.5} />
-
+        <RadarModel />
         {/* Render a dragon ball for each track */}
         {Object.keys(tracks).map((trackId) => (
-          <DragonBallsModel
+          <DragonBallModel
             key={trackId}
-            trackId={trackId} // Pass the string-based trackId
-            emissiveIntensity={2}
+            trackId={trackId}
+            radius={0.1}
           />
         ))}
       </Suspense>

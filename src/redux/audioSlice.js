@@ -1,7 +1,7 @@
 // redux/audioSlice.js
 import { createSlice, configureStore } from "@reduxjs/toolkit";
 
-const RMS_WINDOW_SIZE = 30; // Adjust based on your needs
+const RMS_WINDOW_SIZE = 5; // Adjust based on your needs
 const ATTACK_FACTOR = 0.3; // Fast increase
 const DECAY_FACTOR = 0.005; // Slow decrease
 
