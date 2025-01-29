@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import Scene from '@/components/Scene';
+import Scene from '@/components/scene/Scene';
 import AudioTrack from '@/components/audio/AudioTrack';
 import GlobalControls from './components/GlobalControls';
 import './App.css';

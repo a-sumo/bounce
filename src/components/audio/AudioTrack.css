@@ -1,5 +1,6 @@
 /* components/audio/AudioTrack.css */
 .track-container {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   position: relative;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -12,6 +13,7 @@
   position: relative;
   border-radius: 4px;
   overflow: hidden;
+  margin-bottom: 20px;
 }
 
 .track-info {
@@ -24,7 +26,7 @@
 
 .track-name {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 0, 0, 0.9);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -55,7 +57,7 @@
   color: white;
   backdrop-filter: blur(2px);
   z-index: 10;
-  /* transition: transform 0.2s ease; */
+  transition: transform 0.2s ease;
 }
 
 .play-button:active {

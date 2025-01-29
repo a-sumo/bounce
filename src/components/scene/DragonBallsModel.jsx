@@ -1,8 +1,11 @@
-import { useGLTF, DragControls } from "@react-three/drei";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
+import { useGLTF } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { selectTrackById } from "@/redux/selectors";
 
-const EMISSIVE_COLOR = new THREE.Color(0, 1, 0); // Full red
+const EMISSIVE_COLOR = new THREE.Color(1, 0, 0); // Full green
 
 // Helper function to get dragon ball data by index (1-7)
 const getDragonBallByIndex = (index) => {
@@ -11,97 +14,77 @@ const getDragonBallByIndex = (index) => {
 };
 
 const DRAGON_BALLS = {
-  ONE_STAR: {
-    stars: 1,
-    objectName: "Ball001_2",
-  },
-  TWO_STAR: {
-    stars: 2,
-    objectName: "Ball002_4",
-  },
-  THREE_STAR: {
-    stars: 3,
-    objectName: "Ball003_6",
-  },
-  FOUR_STAR: {
-    stars: 4,
-    objectName: "BALL_2_8",
-  },
-  FIVE_STAR: {
-    stars: 5,
-    objectName: "BALL_2001_10",
-  },
-  SIX_STAR: {
-    stars: 6,
-    objectName: "BALL_2002_12",
-  },
-  SEVEN_STAR: {
-    stars: 7,
-    objectName: "Ball_14",
-  },
+  ONE_STAR: { stars: 1, objectName: "Ball001_2" },
+  TWO_STAR: { stars: 2, objectName: "Ball002_4" },
+  THREE_STAR: { stars: 3, objectName: "Ball003_6" },
+  FOUR_STAR: { stars: 4, objectName: "BALL_2_8" },
+  FIVE_STAR: { stars: 5, objectName: "BALL_2001_10" },
+  SIX_STAR: { stars: 6, objectName: "BALL_2002_12" },
+  SEVEN_STAR: { stars: 7, objectName: "Ball_14" },
 };
 
-const DragonBallsModel = ({ ballIndex = 1, emissiveIntensity = 1 }) => {
+const DragonBallsModel = ({ trackId, emissiveIntensity = 10 }) => {
   const { scene } = useGLTF("/models/the_7_dragon_balls/scene.gltf");
-  const [selectedObject, setSelectedObject] = useState(null);
+  const groupRef = useRef();
+
+  // Fetch track data using memoized selector
+  const track = useSelector(selectTrackById(trackId));
+  const { angle = 0, radius = 5 } = track || {}; // Default values to prevent undefined errors
 
   useEffect(() => {
-    if (scene) {
-      // Get the dragon ball data for the specified index
-      const dragonBall = getDragonBallByIndex(ballIndex);
-      if (!dragonBall) return;
+    if (!scene) return;
 
-      // Find the ball object
-      const ball = scene.getObjectByName(dragonBall.objectName);
-      if (!ball) return;
+    // Get the dragon ball object based on trackId
+    const dragonBall = getDragonBallByIndex(parseInt(trackId.split("-")[1], 10)); // Extract numeric index
+    if (!dragonBall) return;
 
-      // Find the Object_ child
-      const icosphereChild = ball.children.find(
-        (child) => child.name && child.name.startsWith("Icosphere")
-      );
-      console.log("icosphereChild",icosphereChild)
-
-      if (icosphereChild) {
-        // Find the Icosphere child
-        const objectChild = icosphereChild.children.find(
-          (child) => child.name && child.name.startsWith("Object_")
-        );
-        console.log("objectChild ", objectChild )
-        if (objectChild && objectChild.children.length > 0) {
-          // Get the first child of the Icosphere and set its emissive properties
-          const emissiveObject = objectChild.children[0];
-          if (emissiveObject.material) {
-            emissiveObject.material.emissive = EMISSIVE_COLOR;
-            emissiveObject.material.emissiveIntensity = emissiveIntensity;
-            console.log(`Set emissive properties for ${emissiveObject.name}`);
-          }
-        }
-      }
-
-      // Clone the ball for display
-      const clonedBall = ball.clone();
-      console.log("clonedBall",clonedBall);
-      setSelectedObject(clonedBall);
+    const ball = scene.getObjectByName(dragonBall.objectName);
+    if (!ball) {
+      console.error(`Dragon ball not found for trackId: ${trackId}`);
+      return;
     }
 
-    return () => {
-      if (selectedObject) {
-        selectedObject.traverse((child) => {
-          if (child.geometry) child.geometry.dispose();
-          if (child.material) child.material.dispose();
-        });
+    // Clone the ball for display
+    const clonedBall = ball.clone();
+    groupRef.current.add(clonedBall);
+
+    // Set emissive properties
+    clonedBall.traverse((child) => {
+      if (child.isMesh && child.material) {
+        child.material.emissive = EMISSIVE_COLOR;
+        child.material.emissiveIntensity = emissiveIntensity;
       }
+    });
+
+    return () => {
+      // Clean up resources when the component unmounts
+      clonedBall.traverse((child) => {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) child.material.dispose();
+      });
     };
-  }, [scene, ballIndex, emissiveIntensity]);
+  }, [scene, trackId, emissiveIntensity]);
+
+  // Calculate position on the circle
+  const calculatePosition = (radius, angle) => {
+    const x = radius * Math.cos(angle);
+    const z = radius * Math.sin(angle);
+    return [x, 0, z]; // y is 0 to keep it on the ground plane
+  };
+
+  const position = calculatePosition(radius, angle);
+
+  // Smooth rotation around the Z-axis
+  useFrame((state, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.z += delta; // Rotate around the Z-axis
+    }
+  });
 
   return (
-    <>
-      {selectedObject && (
-        <DragControls>
-        <primitive object={selectedObject} scale={0.05} position={[0, 0, 0]} />
-        </DragControls>
-      )}
-    </>
+    <group ref={groupRef} position={position}>
+      {/* The cloned ball will be added dynamically */}
+    </group>
   );
 };
 
