@@ -28,7 +28,7 @@ const DragonBallModel = memo(({ trackId }) => {
 
   const clonedBall = useMemo(() => {
     if (!scene) return null;
-    
+
     const trackNumber = parseInt(trackId.split("-")[1], 10);
     const ballIndex = Math.max(0, (trackNumber - 1) % DRAGON_BALL_OBJECTS.length);
     const originalBall = scene.getObjectByName(DRAGON_BALL_OBJECTS[ballIndex]);
@@ -38,20 +38,41 @@ const DragonBallModel = memo(({ trackId }) => {
     const bbox = new THREE.Box3().setFromObject(clone);
     const size = new THREE.Vector3();
     bbox.getSize(size);
-    
+
     // Store radius in userData for rotation calculations
     clone.userData.radius = (Math.max(size.x, size.y, size.z) / 2) * MODEL_SCALE;
-    
+
     // Reset transformations and set material properties
     clone.rotation.set(0, 0, 0);
     clone.position.set(0, 0, 0);
     clone.traverse((child) => {
       if (child.material) {
-        child.material.emissive = EMISSIVE_COLOR.clone();
-        child.material.emissiveIntensity = 1;
+        // Check if the direct parent's name starts with "Icosphere"
+        const parentName = child.parent?.name || "";
+        if (parentName.startsWith("Icosphere")) {
+          // Assign a glossy red material for stars
+          child.material = new THREE.MeshStandardMaterial({
+            color: 0xeb3434,
+            emissive: 0xeb3434 });
+        } else {
+          // Assign a glossy crystal-like material for the dragon ball
+          child.material = new THREE.MeshPhysicalMaterial({
+            color: 0xffa500, // Base color (white for a crystal ball)
+            metalness: 0.2, // High metalness for glossy reflections
+            roughness: 0.1, // Low roughness for sharp reflections
+            clearcoat: 1, // Adds a glossy layer on top
+            clearcoatRoughness: 0.1, // Smooth clearcoat layer
+            envMapIntensity: 1, // Intensity of environment reflections
+            emissive: EMISSIVE_COLOR, // Emissive glow
+            emissiveIntensity: 2,
+            transparent: true, // Enable transparency for glass-like effect
+            opacity: 1, // Slight transparency
+            transmission: 0.9, // Simulates light passing through the material
+          });
+        }
       }
     });
-    
+
     return clone;
   }, [scene, trackId]);
 
@@ -70,7 +91,6 @@ const DragonBallModel = memo(({ trackId }) => {
     const currentAngle = currentAngleRef.current;
     const deltaAngle = currentAngle - prevAngleRef.current;
     prevAngleRef.current = currentAngle;
-
     if (Math.abs(deltaAngle) < 0.0001) return;
 
     // Calculate rotation parameters
@@ -85,7 +105,6 @@ const DragonBallModel = memo(({ trackId }) => {
       0,
       Math.cos(currentAngle)
     ).normalize();
-
     const axis = new THREE.Vector3(direction.z, 0, -direction.x).normalize();
 
     // Apply rotation to the ball
@@ -95,9 +114,9 @@ const DragonBallModel = memo(({ trackId }) => {
   if (!clonedBall) return null;
 
   return (
-    <primitive 
+    <primitive
       ref={ballRef}
-      object={clonedBall} 
+      object={clonedBall}
       position={position}
       scale={MODEL_SCALE}
     />

@@ -32,7 +32,7 @@ const RadarModel = () => {
         radar.material = material;
 
         if (emissiveMapRef.current) {
-          material.colorMap = emissiveMapRef.current;
+          material.emissiveMap = emissiveMapRef.current;
           material.needsUpdate = true;
         }
       }

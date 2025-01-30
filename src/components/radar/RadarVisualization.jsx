@@ -3,6 +3,69 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { useSelector } from "react-redux";
 
+const drawArrow = (ctx, centerX, centerY, radius, angle) => {
+  const arrowSize = radius * 0.5; // Scale the arrow relative to the radius
+  const scaleFactor = arrowSize / 105; // SVG original height was 105
+
+  // Barycenter (centroid) of the original arrow path coordinates
+  const originalBarycenterX = 20.54545;
+  const originalBarycenterY = 27.14285;
+  
+  // Adjust barycenter for scaling
+  const scaledBarycenterX = originalBarycenterX * scaleFactor;
+  const scaledBarycenterY = originalBarycenterY * scaleFactor;
+
+  ctx.save();
+  ctx.translate(centerX, centerY); // Move to desired center
+  ctx.rotate(angle + Math.PI / 2); // Apply rotation around center point
+  ctx.translate(-scaledBarycenterX, -scaledBarycenterY); // Offset to position barycenter at center
+
+  // Draw scaled arrow path
+  ctx.fillStyle = "#FF0000";
+  ctx.beginPath();
+  ctx.moveTo(21.0909 * scaleFactor, 0);
+  ctx.lineTo(0, 40 * scaleFactor);
+  ctx.lineTo(21.0909 * scaleFactor, 28.5714 * scaleFactor);
+  ctx.lineTo(40 * scaleFactor, 40 * scaleFactor);
+  ctx.lineTo(21.0909 * scaleFactor, 0);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+};
+
+// Helper function for smooth angle interpolation
+const lerpAngle = (current, target, factor) => {
+  const delta =
+    (((target - current + Math.PI) % (Math.PI * 2)) - Math.PI) * factor;
+  return current + delta;
+};
+
+// Compute the average direction vector based on tracks' rms and angle
+const computeAvgDirection = (tracks) => {
+  let totalX = 0;
+  let totalY = 0;
+  let totalWeight = 0;
+
+  Object.values(tracks).forEach(({ rms, angle }) => {
+    const weight = rms; // Use RMS as the weight for this track
+    totalX += weight * Math.cos(angle);
+    totalY += weight * Math.sin(angle);
+    totalWeight += weight;
+  });
+
+  if (totalWeight === 0) return null; // No valid tracks
+
+  // Normalize the direction vector
+  const avgX = totalX / totalWeight;
+  const avgY = totalY / totalWeight;
+
+  // Convert back to angle and magnitude
+  const avgAngle = Math.atan2(avgY, avgX);
+  const avgMagnitude = Math.sqrt(avgX * avgX + avgY * avgY);
+
+  return { angle: avgAngle, magnitude: avgMagnitude };
+};
+
 export default function RadarVisualization({
   targetCenter,
   targetRadius,
@@ -11,38 +74,6 @@ export default function RadarVisualization({
   const tracks = useSelector((state) => state.audio.tracks);
   const canvasRef = useRef(null);
   const textureRef = useRef(null);
-
-  const computeAveragePosition = (tracks) => {
-    let totalX = 0;
-    let totalY = 0;
-    let totalWeight = 0;
-
-    Object.values(tracks).forEach(({ rms, radius, angle }) => {
-      // Weight is the product of RMS and radius
-      const weight = rms * radius;
-      // Add weighted vector components
-      totalX += weight * Math.cos(angle);
-      totalY += weight * Math.sin(angle);
-      totalWeight += weight;
-    });
-
-    if (totalWeight === 0) return { x: 0, y: 0, magnitude: 0 };
-
-    const angle = Math.atan2(totalY, totalX);
-
-    // Cap the magnitude to ensure it stays within the grid
-    const MAX_MAGNITUDE = 1.3; // Adjust based on your grid size
-    const magnitude = Math.min(
-      MAX_MAGNITUDE,
-      Math.sqrt(totalX * totalX + totalY * totalY)
-    );
-
-    return {
-      x: Math.cos(angle) * magnitude,
-      y: Math.sin(angle) * magnitude,
-      magnitude
-    };
-  };
 
   useEffect(() => {
     const canvas = document.createElement("canvas");
@@ -62,6 +93,7 @@ export default function RadarVisualization({
 
   useEffect(() => {
     if (!canvasRef.current || !textureRef.current) return;
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
@@ -78,17 +110,18 @@ export default function RadarVisualization({
     };
 
     let animationFrameId;
+    let currentArrowAngle = 0;
 
     const animate = () => {
       // Clear background
       ctx.fillStyle = "#00b02c";
       ctx.fillRect(0, 0, 1024, 1024);
 
-      // Main boundary circle
-      ctx.beginPath();
-      ctx.arc(targetCenter.x, targetCenter.y, targetRadius, 0, Math.PI * 2);
-      ctx.fillStyle = "#00b02c";
-      ctx.fill();
+      // // Main boundary circle
+      // ctx.beginPath();
+      // ctx.arc(targetCenter.x, targetCenter.y, targetRadius, 0, Math.PI * 2);
+      // ctx.fillStyle = "#00b02c";
+      // ctx.fill();
 
       // Draw square grid
       ctx.strokeStyle = "#005014";
@@ -103,6 +136,7 @@ export default function RadarVisualization({
         ctx.lineTo(xPos, targetCenter.y + targetRadius);
         ctx.stroke();
       }
+
       // Horizontal lines
       for (let y = -8; y <= 8; y++) {
         const yPos = targetCenter.y + y * gridSize;
@@ -151,38 +185,37 @@ export default function RadarVisualization({
         ctx.fillStyle = color;
         ctx.fill();
       });
-      // // Compute average position
-      // const avgPos = computeAveragePosition(tracks);
 
-      // // Convert to virtual coordinates
-      // const vx =
-      //   virtualSize / 2 + avgPos.magnitude * (virtualSize / 4) * avgPos.x;
-      // const vy =
-      //   virtualSize / 2 + avgPos.magnitude * (virtualSize / 4) * avgPos.y;
+      // Compute average direction
+      const avgDirection = computeAvgDirection(tracks);
 
-      // // Transform to canvas coordinates
-      // const [x, y] = transformer.transform(vx, vy);
-      // const pointRadius = transformer.transformRadius(3); // Slightly larger than before
-      // const color = "#ffff00";
+      if (avgDirection) {
+        const { angle: targetAngle } = avgDirection;
 
-      // // Draw average position indicator
-      // const gradient = ctx.createRadialGradient(x, y, 0, x, y, pointRadius * 3);
-      // gradient.addColorStop(0, color);
-      // gradient.addColorStop(0.1, color);
-      // gradient.addColorStop(1, "transparent");
+        // Smoothly interpolate the arrow's angle
+        currentArrowAngle = lerpAngle(currentArrowAngle, targetAngle, 0.8);
 
-      // ctx.beginPath();
-      // ctx.arc(x, y, pointRadius * 3, 0, Math.PI * 2);
-      // ctx.fillStyle = gradient;
-      // ctx.fill();
-
-      // ctx.beginPath();
-      // ctx.arc(x, y, pointRadius, 0, Math.PI * 2);
-      // ctx.fillStyle = color;
-      // ctx.fill();
+        drawArrow(
+          ctx,
+          targetCenter.x,
+          targetCenter.y,
+          targetRadius * 0.8,
+          currentArrowAngle
+        );
+      }
+      else {
+      drawArrow(
+        ctx,
+        targetCenter.x,
+        targetCenter.y,
+        targetRadius * 0.8,
+        0
+      );
+      }
 
       // Update the texture
       textureRef.current.needsUpdate = true;
+
       animationFrameId = requestAnimationFrame(animate);
     };
 

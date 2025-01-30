@@ -1,4 +1,3 @@
-// redux/audioSlice.js
 import { createSlice, configureStore } from "@reduxjs/toolkit";
 
 const RMS_WINDOW_SIZE = 5; // Adjust based on your needs
