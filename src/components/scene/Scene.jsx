@@ -46,7 +46,7 @@ export default function Scene() {
             color="#d4d4d4"
           />
         </mesh>
-        <OrbitControls minDistance={1} maxDistance={5} target={[0, 0, 0]} />
+        <OrbitControls minDistance={1} maxDistance={5} target={[0, -0.5, 0]} />
         <RadarModel />
         {Object.keys(tracks).map((trackId) => (
           <DragonBallModel

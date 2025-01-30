@@ -37,7 +37,7 @@ html, body, #root {
   flex-direction: column;
   margin: 0 auto;
   width: 100%;
-  max-width: 600px;
+  max-width: 400px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
