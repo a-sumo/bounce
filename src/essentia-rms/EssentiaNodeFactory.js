@@ -1,6 +1,3 @@
-// src/EssentiaNodeFactory.js
-
-// src/essentia-rms/EssentiaNodeFactory.js
 export async function createEssentiaNode(context) {
   class EssentiaNode extends AudioWorkletNode {
     constructor(context) {

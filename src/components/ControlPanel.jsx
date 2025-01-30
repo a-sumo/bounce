@@ -1,4 +1,3 @@
-// ControlPanel.js
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { playAllTracks, pauseAllTracks, resetAllTracks } from '@/redux/audioSlice';
