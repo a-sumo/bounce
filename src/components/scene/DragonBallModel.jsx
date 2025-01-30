@@ -43,12 +43,10 @@ const DragonBallModel = memo(({ trackId }) => {
     // Store radius in userData for rotation calculations
     clone.userData.radius = (Math.max(size.x, size.y, size.z) / 2) * MODEL_SCALE;
 
-    // Reset transformations and set material properties
     clone.rotation.set(0, 0, 0);
     clone.position.set(0, 0, 0);
     clone.traverse((child) => {
       if (child.material) {
-        // Check if the direct parent's name starts with "Icosphere"
         const parentName = child.parent?.name || "";
         if (parentName.startsWith("Icosphere")) {
           // Assign a glossy red material for stars
@@ -56,7 +54,7 @@ const DragonBallModel = memo(({ trackId }) => {
             color: 0xeb3434,
             emissive: 0xeb3434 });
         } else {
-          child.scale.set(0.93, 0.93, 0.93);
+          child.scale.set(0.97, 0.97, 0.97);
           // Assign a glossy crystal-like material for the dragon ball
           child.material =  Object.assign(new MeshTransmissionMaterial(10), 
           {
@@ -117,14 +115,12 @@ const DragonBallModel = memo(({ trackId }) => {
   if (!clonedBall) return null;
 
   return (
-    // <MeshTransmissionMaterial>
     <primitive
       ref={ballRef}
       object={clonedBall}
       position={position}
       scale={MODEL_SCALE}
     />
-    // </MeshTransmissionMaterial>
   );
 }, (prevProps, nextProps) => prevProps.trackId === nextProps.trackId);
 

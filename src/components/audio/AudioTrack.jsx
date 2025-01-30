@@ -92,7 +92,7 @@ const AudioTrack = ({ trackId, url, offset }) => {
           {url.split("/").pop()}
         </span>
       </div>
-      <div className="waveform-container" ref={waveformRef}>
+      <div className="waveform-play-container">
         <button 
           onClick={handlePlayPause} 
           className="play-button"
@@ -104,6 +104,7 @@ const AudioTrack = ({ trackId, url, offset }) => {
             <FaPlay size={16} style={{ marginLeft: '2px' }} />
           )}
         </button>
+        <div className="waveform-container" ref={waveformRef}></div>
       </div>
       <Sliders trackId={trackId} />
     </div>

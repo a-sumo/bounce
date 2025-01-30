@@ -1,4 +1,3 @@
-/* GlobalControls.css */
 .global-controls {
   display: flex;
   gap: 16px;
@@ -8,7 +7,7 @@
 }
 
 .global-controls button {
-  background-color: #262626; /* Blue button */
+  background-color: #ff5500;
   color: white;
   border: none;
   border-radius: 4px;
@@ -20,10 +19,10 @@
 }
 
 .global-controls button:hover {
-  background-color: #ff5100; /* Darker blue on hover */
+  background-color: #ffa200;
 }
 
 .global-controls button:disabled {
-  background-color: #e0e0e0; /* Light grey when disabled */
+  background-color: #858585;
   cursor: not-allowed;
 }

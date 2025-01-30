@@ -1,0 +1,21 @@
+:root {
+    /* Background Colors */
+    --color-background-light: #CCBA2C; /* Light Yellow */
+    --color-background-dark: #CE7100; /* Dark Orange */
+    
+    /* Primary Colors */
+    --color-primary-dark: #0D2826; /* Dark Green */
+    --color-primary-medium: #2E773D; /* Medium Green */
+    
+    /* Secondary Colors */
+    --color-secondary-light: #B5BDCE; /* Light Gray-Blue */
+    
+    /* Accent Colors */
+    --color-accent-blue: #10125A; /* Deep Blue */
+    --color-accent-light-blue: #355DA7; /* Lighter Blue */
+    
+    /* Neutral Colors */
+    --color-neutral-light: #95BBC8; /* Light Blue-Green */
+    --color-neutral-dark: #833778; /* Dark Purple */
+    --color-neutral-medium: #CB91C3; /* Medium Pink */
+  }

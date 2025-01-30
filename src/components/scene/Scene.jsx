@@ -30,10 +30,7 @@ export default function Scene() {
       }}
     >
       <Suspense fallback={null}>
-        {/* Environment map for reflections */}
         <Environment preset="studio" environmentRotation={[0, Math.PI / 2, 0]} environmentIntensity={0.7}/>
-
-        {/* Ground plane with custom material */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.07, 0]}>
           <planeGeometry args={[50, 50]} />
           <MeshReflectorMaterial
@@ -49,11 +46,7 @@ export default function Scene() {
             color="#d4d4d4"
           />
         </mesh>
-
-        {/* Controls */}
         <OrbitControls minDistance={1} maxDistance={5} target={[0, 0, 0]} />
-
-        {/* Models */}
         <RadarModel />
         {Object.keys(tracks).map((trackId) => (
           <DragonBallModel
