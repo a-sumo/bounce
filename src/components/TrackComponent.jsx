@@ -1,4 +1,3 @@
-// src/components/TrackComponent.js
 import { useCallback } from 'react';
 import TrackControls from './TrackControls';
 import useTrackAnalyzer from '@/hooks/useTrackAnalyzer';

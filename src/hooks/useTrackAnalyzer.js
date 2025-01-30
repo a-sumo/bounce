@@ -1,4 +1,3 @@
-// src/hooks/useTrackAnalyzer.js
 import { useEffect, useRef } from 'react';
 import { createEssentiaNode } from '@/essentia-rms/EssentiaNodeFactory';
 
