@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import "./GlobalControls.css"; // Import the CSS file
+import "./GlobalControls.css";
 import { playAllTracks, pauseAllTracks, resetAllTracks } from "@/redux/audioSlice";
 
 const GlobalControls = () => {

@@ -7,7 +7,6 @@ const Sliders = ({ trackId }) => {
   const dispatch = useDispatch();
   const { angle = 0, radius = 3 } = useSelector((state) => state.audio.tracks[trackId]) || {};
   
-  // Convert the initial angle to degrees (positive for display)
   const [localAngle, setLocalAngle] = useState(angle * 180 / Math.PI);
   const [localRadius, setLocalRadius] = useState(radius);
 
@@ -16,7 +15,6 @@ const Sliders = ({ trackId }) => {
   const handleAngleChange = (event) => {
     const newAngle = parseFloat(event.target.value);
     setLocalAngle(newAngle);
-    // Invert the angle when dispatching to make it counter-clockwise
     const invertedAngle = (-newAngle * Math.PI / 180) % (2 * Math.PI);
     dispatch(setTrackAngleAndRadius({ 
       trackId, 
@@ -28,7 +26,6 @@ const Sliders = ({ trackId }) => {
   const handleRadiusChange = (event) => {
     const newRadius = Math.min(parseFloat(event.target.value), maxRadius);
     setLocalRadius(newRadius);
-    // Use the inverted angle when dispatching radius changes as well
     const invertedAngle = (-localAngle * Math.PI / 180) % (2 * Math.PI);
     dispatch(setTrackAngleAndRadius({ 
       trackId, 

@@ -71,7 +71,7 @@ const useTrackAnalyzer = (audioRef, onAnalysis) => {
         }
         previousAudioRef.current = null;
       };
-    }, [audioRef, onAnalysis]); // Dependencies are stable due to memoization
+    }, [audioRef, onAnalysis]);
   };
 
 export default useTrackAnalyzer;

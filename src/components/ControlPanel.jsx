@@ -2,7 +2,6 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { playAllTracks, pauseAllTracks, resetAllTracks } from '@/redux/audioSlice';
 import { FaPlay, FaPause, FaUndo } from "react-icons/fa";
-// import './ControlPanel.css';
 
 const ControlPanel = () => {
   const dispatch = useDispatch();

@@ -25,9 +25,7 @@ const RadarModel = () => {
       bbox.getCenter(center);
       scene.position.sub(center);
 
-      // Reset rotation
       radar.rotation.set(0, 0, 0);
-      // scene.translateZ(SCALE_FACTOR * 7);
 
       // Update material properties
       if (radar.material) {

@@ -14,7 +14,6 @@ const AudioTrack = ({ trackId, url, offset }) => {
   const dispatch = useDispatch();
   const [rmsLevel, setRmsLevel] = useState(0);
   
-  // Redux state
   const { isPlaying } = useSelector(state => state.audio.tracks[trackId] || {});
   const lastResetTimestamp = useSelector(state => state.audio.lastResetTimestamp);
 
@@ -33,7 +32,6 @@ const AudioTrack = ({ trackId, url, offset }) => {
   useEffect(() => {
     const wavesurfer = WaveSurfer.create({
       container: waveformRef.current,
-      // waveColor: "#5c5c5c",
       progressColor: "#ff5500",
       height: 40,
       responsive: true,

@@ -11,17 +11,14 @@ const CircularInterface = ({
   const [hoverIndex, setHoverIndex] = useState(-1);
   const containerRef = useRef(null);
 
-  // Main circle radius and center
   const CIRCLE_RADIUS = 250;
   const CENTER = { x: 256, y: 256 };
 
-  // Handle pointer/touch down
   const handlePointerDown = (index, e) => {
     setDraggingIndex(index);
     e.currentTarget.setPointerCapture(e.pointerId);
   };
 
-  // Handle pointer/touch move (dragging angle around)
   const handlePointerMove = (e) => {
     if (draggingIndex === -1) return;
 
@@ -29,26 +26,21 @@ const CircularInterface = ({
     const x = e.clientX - rect.left - CENTER.x;
     const y = e.clientY - rect.top - CENTER.y;
 
-    // Calculate angle based on mouse/touch position
     const angle = Math.atan2(y, x);
     onUpdateTrack(draggingIndex, { angle });
   };
 
-  // End dragging
   const handlePointerUp = () => {
     setDraggingIndex(-1);
   };
 
 
-  // Render each track on the circle
   const renderTrack = (track, index) => {
-    // Outer circle position
     const outerPos = {
       x: CENTER.x + Math.cos(track.angle) * CIRCLE_RADIUS,
       y: CENTER.y + Math.sin(track.angle) * CIRCLE_RADIUS,
     };
 
-    // Inner circle moves from center to the outer circle proportionally to intensity
     const innerPos = {
       x: CENTER.x + (outerPos.x - CENTER.x) * track.intensity * 1,
       y: CENTER.y + (outerPos.y - CENTER.y) * track.intensity * 1,

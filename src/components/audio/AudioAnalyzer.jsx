@@ -9,7 +9,6 @@ const AudioAnalyzer = ({ audioUrl }) => {
   const animationFrameRef = useRef(null);
 
   useEffect(() => {
-    // Initialize Web Audio API
     const initAudio = async () => {
       try {
         // Create audio context

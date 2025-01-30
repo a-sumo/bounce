@@ -1,8 +1,8 @@
 import { createSlice, configureStore } from "@reduxjs/toolkit";
 
-const RMS_WINDOW_SIZE = 10; // Adjust based on your needs
-const ATTACK_FACTOR = 0.1; // Fast increase
-const DECAY_FACTOR = 0.1; // Slow decrease
+const RMS_WINDOW_SIZE = 10;
+const ATTACK_FACTOR = 0.1; 
+const DECAY_FACTOR = 0.1;
 
 const initialState = {
   tracks: {},
@@ -50,10 +50,10 @@ const audioSlice = createSlice({
     // Reset all tracks to the start
     resetAllTracks: (state) => {
       state.globalPlaybackState = 'paused';
-      state.lastResetTimestamp = Date.now(); // Update timestamp
+      state.lastResetTimestamp = Date.now();
       Object.keys(state.tracks).forEach(trackId => {
         state.tracks[trackId].isPlaying = false;
-        state.tracks[trackId].currentTime = 0; // Reset playback position
+        state.tracks[trackId].currentTime = 0;
       });
     },
     setTrackAngleAndRadius: (state, action) => {

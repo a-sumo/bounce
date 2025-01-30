@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { useSelector } from "react-redux";
 
 const drawArrow = (ctx, centerX, centerY, radius, angle) => {
-  const arrowSize = radius * 0.5; // Scale the arrow relative to the radius
+  const arrowSize = radius * 0.5;
   const scaleFactor = arrowSize / 105; // SVG original height was 105
 
   // Barycenter (centroid) of the original arrow path coordinates
@@ -16,9 +16,9 @@ const drawArrow = (ctx, centerX, centerY, radius, angle) => {
   const scaledBarycenterY = originalBarycenterY * scaleFactor;
 
   ctx.save();
-  ctx.translate(centerX, centerY); // Move to desired center
-  ctx.rotate(angle + Math.PI / 2); // Apply rotation around center point
-  ctx.translate(-scaledBarycenterX, -scaledBarycenterY); // Offset to position barycenter at center
+  ctx.translate(centerX, centerY);
+  ctx.rotate(angle + Math.PI / 2);
+  ctx.translate(-scaledBarycenterX, -scaledBarycenterY);
 
   // Draw scaled arrow path
   ctx.fillStyle = "#FF0000";
@@ -47,13 +47,13 @@ const computeAvgDirection = (tracks) => {
   let totalWeight = 0;
 
   Object.values(tracks).forEach(({ rms, angle }) => {
-    const weight = rms; // Use RMS as the weight for this track
+    const weight = rms;
     totalX += weight * Math.cos(angle);
     totalY += weight * Math.sin(angle);
     totalWeight += weight;
   });
 
-  if (totalWeight === 0) return null; // No valid tracks
+  if (totalWeight === 0) return null;
 
   // Normalize the direction vector
   const avgX = totalX / totalWeight;
@@ -128,7 +128,6 @@ export default function RadarVisualization({
       ctx.lineWidth = 2;
       const gridSize = (targetRadius * 2) / 16;
 
-      // Vertical lines
       for (let x = -8; x <= 8; x++) {
         const xPos = targetCenter.x + x * gridSize;
         ctx.beginPath();
@@ -137,7 +136,6 @@ export default function RadarVisualization({
         ctx.stroke();
       }
 
-      // Horizontal lines
       for (let y = -8; y <= 8; y++) {
         const yPos = targetCenter.y + y * gridSize;
         ctx.beginPath();
@@ -146,12 +144,9 @@ export default function RadarVisualization({
         ctx.stroke();
       }
 
-      // Draw each track
       Object.entries(tracks).forEach(([trackId, { rms, radius, angle }]) => {
-        // The amplitude we use to move the indicator
         const amplitude = rms * radius;
 
-        // We'll place the track in the center + (amplitude * cos(angle), amplitude * sin(angle))
         const vx =
           virtualSize / 2 + amplitude * (virtualSize / 4) * Math.cos(angle);
         const vy =
@@ -161,7 +156,6 @@ export default function RadarVisualization({
         const pointRadius = transformer.transformRadius(2);
         const color = "#ffff00";
 
-        // Glow effect
         const gradient = ctx.createRadialGradient(
           x,
           y,
@@ -179,20 +173,17 @@ export default function RadarVisualization({
         ctx.fillStyle = gradient;
         ctx.fill();
 
-        // Draw center dot
         ctx.beginPath();
         ctx.arc(x, y, pointRadius, 0, Math.PI * 2);
         ctx.fillStyle = color;
         ctx.fill();
       });
 
-      // Compute average direction
       const avgDirection = computeAvgDirection(tracks);
 
       if (avgDirection) {
         const { angle: targetAngle } = avgDirection;
 
-        // Smoothly interpolate the arrow's angle
         currentArrowAngle = lerpAngle(currentArrowAngle, targetAngle, 1);
 
         drawArrow(
@@ -213,7 +204,6 @@ export default function RadarVisualization({
       );
       }
 
-      // Update the texture
       textureRef.current.needsUpdate = true;
 
       animationFrameId = requestAnimationFrame(animate);

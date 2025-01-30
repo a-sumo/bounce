@@ -12,7 +12,6 @@ export default function App() {
     { id: 'track-2', url: '/audio/clap_loop.mp3' },
   ];
 
-  // Generate stable IDs
   trackIds.current = tracks.map(t => t.id);
 
   return (
