@@ -12,6 +12,11 @@ const RadarModel = () => {
   useEffect(() => {
     const radar = scene.getObjectByName("Object_2");
     scene.scale.set(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR);
+    const holder_1 = scene.getObjectByName("Object_3");
+    if(holder_1) holder_1.visible = false;
+    const holder_2 = scene.getObjectByName("Object_5");
+    if(holder_2) holder_2.visible = false;
+    scene.getObjectByName("Object_2");
 
     if (radar) {
       // Calculate bounding box and center the radar

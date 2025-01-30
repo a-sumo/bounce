@@ -193,7 +193,7 @@ export default function RadarVisualization({
         const { angle: targetAngle } = avgDirection;
 
         // Smoothly interpolate the arrow's angle
-        currentArrowAngle = lerpAngle(currentArrowAngle, targetAngle, 0.8);
+        currentArrowAngle = lerpAngle(currentArrowAngle, targetAngle, 1);
 
         drawArrow(
           ctx,

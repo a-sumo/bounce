@@ -33,8 +33,8 @@ const AudioTrack = ({ trackId, url }) => {
   useEffect(() => {
     const wavesurfer = WaveSurfer.create({
       container: waveformRef.current,
-      waveColor: "#ff5501",
-      progressColor: "#d44700",
+      // waveColor: "#5c5c5c",
+      progressColor: "#ff5500",
       height: 40,
       responsive: true,
     });
@@ -92,7 +92,7 @@ const AudioTrack = ({ trackId, url }) => {
           {url.split("/").pop()}
         </span>
         <div className="rms-display">
-          {rmsLevel === -Infinity ? "0" : rmsLevel.toFixed(1)} dB
+          {rmsLevel === -Infinity ? "0" : rmsLevel.toFixed(1)}
         </div>
       </div>
       <div className="waveform-container" ref={waveformRef}>

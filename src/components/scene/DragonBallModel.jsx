@@ -1,5 +1,6 @@
 import { memo, useMemo, useEffect, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
+import { MeshTransmissionMaterial } from './MeshTransmissionMaterial'
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { selectTrackById } from "@/redux/selectors";
@@ -55,20 +56,22 @@ const DragonBallModel = memo(({ trackId }) => {
             color: 0xeb3434,
             emissive: 0xeb3434 });
         } else {
+          child.scale.set(0.93, 0.93, 0.93);
           // Assign a glossy crystal-like material for the dragon ball
-          child.material = new THREE.MeshPhysicalMaterial({
-            color: 0xffa500, // Base color (white for a crystal ball)
-            metalness: 0.2, // High metalness for glossy reflections
-            roughness: 0.1, // Low roughness for sharp reflections
-            clearcoat: 1, // Adds a glossy layer on top
-            clearcoatRoughness: 0.1, // Smooth clearcoat layer
-            envMapIntensity: 1, // Intensity of environment reflections
-            emissive: EMISSIVE_COLOR, // Emissive glow
-            emissiveIntensity: 2,
-            transparent: true, // Enable transparency for glass-like effect
-            opacity: 1, // Slight transparency
-            transmission: 0.9, // Simulates light passing through the material
+          child.material =  Object.assign(new MeshTransmissionMaterial(10), 
+          {
+            diffuseColor: 0xeb3434,
+            clearcoat: 1,
+            clearcoatRoughness: 0,
+            transmission: 1,
+            chromaticAberration: 0.03,
+            anisotrophicBlur: 0.1,
+            // Set to > 0 for diffuse roughness
+            roughness: 0,
+            thickness: 4.5,
+            ior: 1.8,
           });
+          child.material.color = new THREE.Color("#ff5e00");
         }
       }
     });
@@ -80,7 +83,7 @@ const DragonBallModel = memo(({ trackId }) => {
   const position = useMemo(() => {
     return new THREE.Vector3(
       DISTANCE_FROM_ORIGIN * Math.cos(angle),
-      0.299 * MODEL_SCALE,
+      0.2 * MODEL_SCALE,
       DISTANCE_FROM_ORIGIN * Math.sin(angle)
     );
   }, [angle]);
@@ -114,12 +117,14 @@ const DragonBallModel = memo(({ trackId }) => {
   if (!clonedBall) return null;
 
   return (
+    // <MeshTransmissionMaterial>
     <primitive
       ref={ballRef}
       object={clonedBall}
       position={position}
       scale={MODEL_SCALE}
     />
+    // </MeshTransmissionMaterial>
   );
 }, (prevProps, nextProps) => prevProps.trackId === nextProps.trackId);
 
