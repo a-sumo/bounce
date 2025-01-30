@@ -1,9 +1,8 @@
----
 
-| Resource      | URL |
-|--------------|-----|
-| Live Demo    | [Dragon Bounce App](https://bounce-beta.vercel.app/) |
-| Source Code  | [GitHub Repository](https://github.com/a-sumo/bounce) |
+Live Demo: [Dragon Bounce App](https://bounce-beta.vercel.app/)
+Source Code: [GitHub Repository](https://github.com/a-sumo/bounce)
+
+<img src="./public/textures/dragon-bounce-thumbnail.png" width="500" alt="Dragon Bounce Logo" style="display: block; margin: auto;"/>
 
 ## Demo Videos 🎥
 
