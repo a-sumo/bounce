@@ -35,7 +35,7 @@ export default function Scene() {
           <MeshReflectorMaterial
             blur={[400, 100]}
             resolution={1024}
-            mixBlur={1}
+            mixBlur={0.8}
             mixStrength={15}
             depthScale={1}
             minDepthThreshold={0.85}
