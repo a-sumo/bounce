@@ -46,7 +46,7 @@ const DragonBallModel = memo(({ trackId }) => {
     clone.traverse((child) => {
       if (child.material) {
         child.material.emissive = EMISSIVE_COLOR.clone();
-        child.material.emissiveIntensity = 1;
+        child.material.emissiveIntensity = 0;
       }
     });
 
@@ -56,9 +56,9 @@ const DragonBallModel = memo(({ trackId }) => {
   // Position calculation based on angle
   const position = useMemo(() => {
     return new THREE.Vector3(
-      DISTANCE_FROM_ORIGIN * Math.cos(-angle),
-      DISTANCE_FROM_ORIGIN * Math.sin(-angle),
-      0
+      DISTANCE_FROM_ORIGIN * Math.cos(angle),
+      0,
+      DISTANCE_FROM_ORIGIN * Math.sin(angle),
     );
   }, [angle]);
 
@@ -69,7 +69,7 @@ const DragonBallModel = memo(({ trackId }) => {
       object={clonedBall} 
       position={position}
       scale={MODEL_SCALE}
-      rotation={[Math.PI / 2, 0, 0]}
+      rotation={[0, 0, 0]}
     />
   );
 }, (prevProps, nextProps) => prevProps.trackId === nextProps.trackId);

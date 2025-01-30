@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment } from "@react-three/drei";
+import { OrbitControls, MeshReflectorMaterial, Environment } from "@react-three/drei";
 import { Suspense } from "react";
 import DragonBallModel from "@/components/scene/DragonBallModel";
 import RadarModel from "@/components/scene/RadarModel";
@@ -26,13 +26,24 @@ export default function Scene() {
     >
       <Suspense fallback={null}>
         <Environment
-          backgroundBlurriness={1}
-          background={true}
-          files="/textures/equirectangular/royal_esplanade_1k.hdr"
+          preset="dawn"
         />
         <OrbitControls minDistance={1} maxDistance={5} target={[0, 0, -0.2]} />
         <axesHelper args={[5]} />
-        <gridHelper />
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.07, 0]}>
+          <planeGeometry args={[50, 50]} />
+          <MeshReflectorMaterial
+            blur={[400, 100]}
+            resolution={1024}
+            mixBlur={1}
+            mixStrength={15}
+            depthScale={1}
+            minDepthThreshold={0.85}
+            color="#151515"
+            metalness={0.6}
+            roughness={1}
+          />
+        </mesh>        
         <ambientLight intensity={0.5} />
         <RadarModel />
         {/* Render a dragon ball for each track */}
