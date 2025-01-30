@@ -7,7 +7,7 @@ import './AudioTrack.css';
 import { registerTrack, updateTrack, unregisterTrack } from '@/redux/audioSlice';
 import Sliders from '@/components/Sliders';
 
-const AudioTrack = ({ trackId, url }) => {
+const AudioTrack = ({ trackId, url, offset }) => {
   const waveformRef = useRef(null);
   const wavesurferRef = useRef(null);
   const essentiaNodeRef = useRef(null);
@@ -91,9 +91,6 @@ const AudioTrack = ({ trackId, url }) => {
         <span className="track-name" title={url.split("/").pop()}>
           {url.split("/").pop()}
         </span>
-        <div className="rms-display">
-          {rmsLevel === -Infinity ? "0" : rmsLevel.toFixed(1)}
-        </div>
       </div>
       <div className="waveform-container" ref={waveformRef}>
         <button 

@@ -5,13 +5,13 @@ import "./Sliders.css";
 
 const Sliders = ({ trackId }) => {
   const dispatch = useDispatch();
-  const { angle = 0, radius = 5 } = useSelector((state) => state.audio.tracks[trackId]) || {};
+  const { angle = 0, radius = 3 } = useSelector((state) => state.audio.tracks[trackId]) || {};
   
   // Convert the initial angle to degrees (positive for display)
   const [localAngle, setLocalAngle] = useState(angle * 180 / Math.PI);
   const [localRadius, setLocalRadius] = useState(radius);
 
-  const maxRadius = 5;
+  const maxRadius = 3;
 
   const handleAngleChange = (event) => {
     const newAngle = parseFloat(event.target.value);

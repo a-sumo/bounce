@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 
 const EMISSIVE_COLOR = new THREE.Color(1, 0, 0);
 const MODEL_SCALE = 0.1;
-const DISTANCE_FROM_ORIGIN = 0.4;
+const DISTANCE_FROM_ORIGIN = 0.48;
 
 const DRAGON_BALL_OBJECTS = [
   "Ball_14", "BALL_2_8", "BALL_2001_10", "Ball001_2",

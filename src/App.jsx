@@ -26,7 +26,7 @@ export default function App() {
           <GlobalControls/>
           {tracks.map((track) => (
             <div key={track.id} className="track-item">
-              <AudioTrack trackId={track.id} url={track.url} />
+              <AudioTrack trackId={track.id} url={track.url}/>
             </div>
           ))}
         </div>

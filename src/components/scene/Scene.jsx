@@ -19,7 +19,7 @@ export default function Scene() {
     <Canvas
       camera={{
         fov: 45,
-        position: [0, 2, 1],
+        position: [1, 1, 1],
         near: 0.25,
         far: 20,
       }}
@@ -51,7 +51,7 @@ export default function Scene() {
         </mesh>
 
         {/* Controls */}
-        <OrbitControls minDistance={1} maxDistance={5} target={[0, 0, -0.2]} />
+        <OrbitControls minDistance={1} maxDistance={5} target={[0, 0, 0]} />
 
         {/* Models */}
         <RadarModel />

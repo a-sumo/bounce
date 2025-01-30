@@ -1,8 +1,8 @@
 import { createSlice, configureStore } from "@reduxjs/toolkit";
 
-const RMS_WINDOW_SIZE = 5; // Adjust based on your needs
-const ATTACK_FACTOR = 0.3; // Fast increase
-const DECAY_FACTOR = 0.005; // Slow decrease
+const RMS_WINDOW_SIZE = 10; // Adjust based on your needs
+const ATTACK_FACTOR = 0.1; // Fast increase
+const DECAY_FACTOR = 0.1; // Slow decrease
 
 const initialState = {
   tracks: {},
@@ -17,7 +17,7 @@ const audioSlice = createSlice({
       state.tracks[trackId] = {
         rms: 0,
         rmsWindow: new Array(RMS_WINDOW_SIZE).fill(0),
-        radius: 5,
+        radius: 3,
         angle: 0,
         isPlaying: false,
       };

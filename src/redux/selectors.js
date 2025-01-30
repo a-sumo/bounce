@@ -7,7 +7,7 @@ export const selectTrackById = createSelector(
   ],
   (tracks, trackId) => ({
     angle: tracks[trackId]?.angle || 0,
-    radius: tracks[trackId]?.radius || 5,
+    radius: tracks[trackId]?.radius || 3,
     isPlaying: tracks[trackId]?.isPlaying || false
   })
 );
