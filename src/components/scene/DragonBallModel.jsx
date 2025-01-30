@@ -1,5 +1,6 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useEffect, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { selectTrackById } from "@/redux/selectors";
 import { useSelector } from "react-redux";
@@ -8,68 +9,97 @@ const EMISSIVE_COLOR = new THREE.Color(1, 0, 0);
 const MODEL_SCALE = 0.1;
 const DISTANCE_FROM_ORIGIN = 0.4;
 
-// Map track numbers to specific dragon ball models
 const DRAGON_BALL_OBJECTS = [
-  "Ball_14",   // Index 0: ONE_STAR (track-1)
-  "BALL_2_8",   // Index 1: TWO_STAR (track-2)
-  "BALL_2001_10",   // Index 2: THREE_STAR (track-3)
-  "Ball001_2",    // Index 3: FOUR_STAR (track-4)
-  "BALL_2002_12",// Index 4: FIVE_STAR (track-5)
-  "Ball002_4",// Index 5: SIX_STAR (track-6)
-  "Ball003_6"      // Index 6: SEVEN_STAR (track-7)
+  "Ball_14", "BALL_2_8", "BALL_2001_10", "Ball001_2",
+  "BALL_2002_12", "Ball002_4", "Ball003_6"
 ];
-
 
 const DragonBallModel = memo(({ trackId }) => {
   const { scene } = useGLTF("/models/the_7_dragon_balls/scene.gltf");
   const { angle } = useSelector(state => selectTrackById(state, trackId));
-  
-  // Get the correct dragon ball based on track number
+  const ballRef = useRef();
+  const prevAngleRef = useRef(angle);
+  const currentAngleRef = useRef(angle);
+
+  // Update current angle when Redux store changes
+  useEffect(() => {
+    currentAngleRef.current = angle;
+  }, [angle]);
+
   const clonedBall = useMemo(() => {
     if (!scene) return null;
     
-    // Extract track number from ID (track-1 -> 1, track-2 -> 2, etc.)
     const trackNumber = parseInt(trackId.split("-")[1], 10);
-    console.log("trackNumber", trackNumber)
-    // Adjust for zero-based index and ensure valid range
     const ballIndex = Math.max(0, (trackNumber - 1) % DRAGON_BALL_OBJECTS.length);
-    console.log("ballIndex", ballIndex);
     const originalBall = scene.getObjectByName(DRAGON_BALL_OBJECTS[ballIndex]);
     if (!originalBall) return null;
 
     const clone = originalBall.clone();
+    const bbox = new THREE.Box3().setFromObject(clone);
+    const size = new THREE.Vector3();
+    bbox.getSize(size);
     
-    // Reset transformations
+    // Store radius in userData for rotation calculations
+    clone.userData.radius = (Math.max(size.x, size.y, size.z) / 2) * MODEL_SCALE;
+    
+    // Reset transformations and set material properties
     clone.rotation.set(0, 0, 0);
     clone.position.set(0, 0, 0);
-    // Set emissive properties
     clone.traverse((child) => {
       if (child.material) {
         child.material.emissive = EMISSIVE_COLOR.clone();
         child.material.emissiveIntensity = 0;
       }
     });
-
+    
     return clone;
   }, [scene, trackId]);
 
-  // Position calculation based on angle
+  // Calculate position based on current angle
   const position = useMemo(() => {
     return new THREE.Vector3(
       DISTANCE_FROM_ORIGIN * Math.cos(angle),
-      0,
-      DISTANCE_FROM_ORIGIN * Math.sin(angle),
+      0.3 * MODEL_SCALE,
+      DISTANCE_FROM_ORIGIN * Math.sin(angle)
     );
   }, [angle]);
+
+  // Frame-based rotation update
+  useFrame(() => {
+    if (!ballRef.current) return;
+    const currentAngle = currentAngleRef.current;
+    const deltaAngle = currentAngle - prevAngleRef.current;
+    prevAngleRef.current = currentAngle;
+
+    if (Math.abs(deltaAngle) < 0.0001) return;
+
+    // Calculate rotation parameters
+    const orbitRadius = DISTANCE_FROM_ORIGIN;
+    const ballRadius = ballRef.current.userData.radius * 2;
+    const distance = deltaAngle * orbitRadius;
+    const rotationAngle = distance / ballRadius;
+
+    // Calculate direction and rotation axis
+    const direction = new THREE.Vector3(
+      -Math.sin(currentAngle),
+      0,
+      Math.cos(currentAngle)
+    ).normalize();
+
+    const axis = new THREE.Vector3(direction.z, 0, -direction.x).normalize();
+
+    // Apply rotation to the ball
+    ballRef.current.rotateOnWorldAxis(axis, rotationAngle);
+  });
 
   if (!clonedBall) return null;
 
   return (
     <primitive 
+      ref={ballRef}
       object={clonedBall} 
       position={position}
       scale={MODEL_SCALE}
-      rotation={[0, 0, 0]}
     />
   );
 }, (prevProps, nextProps) => prevProps.trackId === nextProps.trackId);
