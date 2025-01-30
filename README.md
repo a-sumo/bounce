@@ -21,3 +21,8 @@ Source Code: [GitHub Repository](https://github.com/a-sumo/bounce)
 - [Version 0.2 - 3D Radar Model with Animated Canvas Texture on Material](https://youtu.be/-5WkzmnMKZ0)
 - [Version 0.3 - 3D Radar Model with Single Track RMS Indicators ](https://youtu.be/xnAA2ukd7jM) 
 - [Version 0.4 - Multi-Track Playback with Additional Object Parameters ](https://youtu.be/B9a391Fds9U)
+
+These are the core technical elements from the project that will be discussed in an upcoming blog post (https://a-sumo.github.io/posts/dragon-bounce/)
+- Dynamic HTML Canvas Textures on GTLF models 
+- Audio Worklets with Wavesurfer.js 
+- React Redux State Management
